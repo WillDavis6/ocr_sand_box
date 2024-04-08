@@ -18,3 +18,11 @@ Additioanl long form example of how to perform OCR while ignoring table lines in
 Notes about Dilation and Erosion to be added.
 
 Notes about ideal pixel height (30-33px) For tesseract.
+
+
+
+Prerequisities/Dependencies
+
+PyTesseract
+Numpy
+OpenCV => 2.4.8

@@ -1,7 +1,7 @@
 #SOURCE: https://github.com/fazlurnu/Text-Extraction-Table-Image/blob/master/scripts/preprocessing.py
 
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd = '.exe'
+pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 import cv2 as cv
 from ocr import detect_lines, get_ROI

@@ -100,7 +100,7 @@ def overlapping_filter(lines, sorting_index):
 
     return filtered_lines
 
-def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 50, minLength = 290, maxLineGap = 6, display = False, write = False):
+def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 50, minLinLength = 290, maxLineGap = 3, display = False, write = False):
     # Check if image is loaded fine
     gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
@@ -114,7 +114,7 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
     cImage = np.copy(image)
 
     #linesP = cv.HoughLinesP(dst, 1, np.pi / 180, 50, None, 290, 6)
-    linesP = cv.HoughLinesP(dst, rho, theta, threshold, None, minLineLength, maxLineGap)
+    linesP = cv.HoughLinesP(dst, rho, theta, threshold, None, minLinLength, maxLineGap)
 
     horizontal_lines = []
     vertical_lines = []
@@ -153,7 +153,7 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
     return (horizontal_lines, vertical_lines)
 
 def get_cropped_image(image, x, y, w, h):
-    cropped_image = image[ y:y+h , x:x+h]
+    cropped_image = image[ y:y+h , x:x+w]
     return cropped_image
 
 def get_ROI(image, horizontal, vertical, left_line_index, right_line_index, top_line_index, bottom_line_index, offset=4):
