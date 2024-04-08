@@ -151,3 +151,35 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
         cv.imwrite("../Images/" + title + ".png", cImage)
 
     return (horizontal_lines, vertical_lines)
+
+def get_cropped_image(image, x, y, w, h):
+    cropped_image = image[ y:y+h , x:x+h]
+    return cropped_image
+
+def get_ROI(image, horizontal, vertical, left_line_index, right_line_index, top_line_index, bottom_line_index, offset=4):
+    x1 = vertical[left_line_index][2] + offset
+    y1 = horizontal[top_line_index][3] + offset
+    x2 = vertical[right_line_index][2] - offset
+    y2 = horizontal[bottom_line_index][3] - offset
+
+    w = x2 - x1
+    h = y2 - y1
+
+    cropped_image = get_cropped_image(image, x1, y1, w, h)
+
+    return cropped_image, (x1, y1, w, h)
+
+def main(argv):
+
+    default_file = '"C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\Screenshot 2024-04-08 123224.png"'
+    filename = argv[0] if len(argv) > 0 else default_file
+
+    src = cv.imread(cv.samples.findFile(filename))
+
+    # Loads an image
+    horizontal, vertical = detect_lines(src, display=True)
+
+    return 0
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
