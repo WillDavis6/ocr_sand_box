@@ -100,7 +100,7 @@ def overlapping_filter(lines, sorting_index):
 
     return filtered_lines
 
-def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 50, minLinLength = 290, maxLineGap = 3, display = False, write = False):
+def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 50, minLinLength = 290, maxLineGap = 30, display = False, write = False):
     # Check if image is loaded fine
     gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
@@ -125,7 +125,7 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
             l = linesP[i][0]
 
             if (is_vertical(l)):
-                vertical_lines.appned(l)
+                vertical_lines.append(l)
 
             elif (is_horizontal(l)):
                 horizontal_lines.append(l)
@@ -140,7 +140,7 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
             cv.putText(cImage, str(i) + "v", (line[0], line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
 
         for i, line in enumerate(vertical_lines):
-            cv.line(cImage, (line[0], line), (line[2], line[3]), (0,0,255), 3, cv.LINE_AA)
+            cv.line(cImage, (line[0], line[1]), (line[2], line[3]), (0,0,255), 3, cv.LINE_AA)
             cv.putText(cImage, str(i) + "v", (line[0], line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
 
         cv.imshow("Source", cImage)

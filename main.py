@@ -5,15 +5,19 @@ from ocr import detect_lines, get_ROI
 import cv2 as cv
 
 def main(display = False, print_text = False, write = False):
-    filename = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\Screenshot 2024-04-08 123224.png"
+    filename = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\5005 AD.png"
 
     src = cv.imread(cv.samples.findFile(filename))
 
-    horizontal, vertical = detect_lines(src, minLinLength=350, display=True, write=True)
+    ret,src = cv.threshold(src,127,255,cv.THRESH_BINARY)
+
+    horizontal, vertical = detect_lines(src, minLinLength=150, display=True, write=True)
+
+    print(f'horizontal: {horizontal}, vertical: {vertical}')
 
     ## invert area
-    left_line_index = 17
-    right_line_index = 20
+    left_line_index = 0
+    right_line_index = 4
     top_line_index = 0
     bottom_line_index = -1
 
