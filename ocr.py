@@ -100,7 +100,7 @@ def overlapping_filter(lines, sorting_index):
 
     return filtered_lines
 
-def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLineGap = 30, display = False, write = False):
+def detect_lines(image, title='default', rho = 1, theta = np.pi/90, threshold = 7, minLinLength = 1500, maxLineGap = 30, display = False, write = False):
     # Check if image is loaded fine
     gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
