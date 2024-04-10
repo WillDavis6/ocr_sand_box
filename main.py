@@ -11,7 +11,7 @@ def main(display = False, print_text = False, write = False):
 
     ret,src = cv.threshold(src,127,255,cv.THRESH_BINARY)
 
-    horizontal, vertical = detect_lines(src, minLinLength=150, display=True, write=True)
+    horizontal, vertical = detect_lines(src, minLinLength=400, display=True, write=True)
 
     print(f'horizontal: {horizontal}, vertical: {vertical}')
 
