@@ -1,4 +1,4 @@
-# ocr_sand_box
+# ocr_optimization_for_poor_quality_blueprints
 Data base for ocr pre image processing and enhancment
 
 Holds examples for threshing including, simple, adaptive and Otsu threshing.
