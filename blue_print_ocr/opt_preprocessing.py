@@ -5,8 +5,8 @@ import numpy as np
 
 def erode(img, kernel_size = 5):
 
-    kernel = np.ones((kernel_size, kernel_size), np.unit8)
-    img_erosion = cv.dilate(img, kernel, iternations=2)
+    kernel = np.ones((kernel_size, kernel_size), np.uint64)
+    img_erosion = cv.erode(img, kernel, iterations=4)
     return img_erosion
 
 def get_all_grayscales(blueprint_url):
@@ -14,6 +14,10 @@ def get_all_grayscales(blueprint_url):
     scr = cv.imread(cv.samples.findFile(blueprint_url), cv.IMREAD_GRAYSCALE)
     scr2 = cv.medianBlur(scr,5)
     blur = cv.GaussianBlur(scr,(5,5),0)
+
+    scr = erode(scr, 3)
+    scr2 = erode(scr2, 3)
+    blur = erode(blur, 3)
 
 
     ret, test1 = cv.threshold(scr,127,255,cv.THRESH_BINARY)
@@ -37,13 +41,29 @@ def is_vertical(line):
 def is_horizontal(line):
     return line[1]==line[3]
 
-def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLinGap = 30, display = False, wrtie = False):
+def overlapping_filter(lines, sorting_index):
+    filtered_lines = []
+
+    lines = sorted(lines, key=lambda lines: lines[sorting_index])
+
+    for i in range(len(lines)):
+        l_curr = lines[i]
+        if(i>0):
+            l_prev = lines[i-1]
+            if( (l_curr[sorting_index] - l_prev[sorting_index]) > 5):
+                filtered_lines.append(l_curr)
+            else:
+                filtered_lines.append(l_curr)
+    
+    return filtered_lines
+
+def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLinGap = 30, display = False, write = False):
 
     if image is None:
         print('Error opening image!')
         return -1
     
-    dst = cv.Canny(image, 50, 150, 3, True)
+    dst = cv.Canny(image, 50, 150, False, 3)
 
     cImage = np.copy(image)
 
@@ -69,4 +89,18 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
     if (display):
         for i, line in enumerate(horizontal_lines):
             cv.line(cImage, (0, line[1]), (800, line[3]), (0,255,0), 3, cv.LINE_AA)
+
+            cv.putText(cImage, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+        
+        for i, line in enumerate(vertical_lines):
+            cv.line(cImage, (line[0], 0), (line[2], 1200), (0, 0, 255), 3, cv.LINE_AA)
+
+            cv.putText(cImage, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+
+        print(f'################################## MADE TO END OF LINE DETECTION ###################################')
+        cv.imshow("Source", cImage)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
+
+    return cImage
 
