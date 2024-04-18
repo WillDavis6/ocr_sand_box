@@ -15,9 +15,9 @@ def get_all_grayscales(blueprint_url):
     scr2 = cv.medianBlur(scr,5)
     blur = cv.GaussianBlur(scr,(5,5),0)
 
-    scr = erode(scr, 3)
-    scr2 = erode(scr2, 3)
-    blur = erode(blur, 3)
+    scr = erode(scr, 1)
+    scr2 = erode(scr2, 1)
+    blur = erode(blur, 1)
 
 
     ret, test1 = cv.threshold(scr,127,255,cv.THRESH_BINARY)
@@ -57,7 +57,7 @@ def overlapping_filter(lines, sorting_index):
     
     return filtered_lines
 
-def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLinGap = 30, display = False, write = False):
+def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLinGap = 20, display = False, write = False):
 
     if image is None:
         print('Error opening image!')
@@ -66,6 +66,8 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
     dst = cv.Canny(image, 50, 150, False, 3)
 
     cImage = np.copy(image)
+
+    cImage_color = cv.cvtColor(cImage, cv.COLOR_GRAY2BGR)
 
     linesP = cv.HoughLinesP(dst, rho, theta, threshold, None, minLinLength, maxLinGap)
 
@@ -88,19 +90,45 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
 
     if (display):
         for i, line in enumerate(horizontal_lines):
-            cv.line(cImage, (0, line[1]), (800, line[3]), (0,255,0), 3, cv.LINE_AA)
+            cv.line(cImage_color, (0, line[1]), (800, line[3]), (0,255,0), 1, cv.LINE_AA)
 
-            cv.putText(cImage, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+            #cv.putText(cImage, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
         
         for i, line in enumerate(vertical_lines):
-            cv.line(cImage, (line[0], 0), (line[2], 1200), (0, 0, 255), 3, cv.LINE_AA)
+            cv.line(cImage_color, (line[0], 0), (line[2], 1200), (0,0,255), 1, cv.LINE_AA)
 
-            cv.putText(cImage, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+            #cv.putText(cImage, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
 
-        print(f'################################## MADE TO END OF LINE DETECTION ###################################')
-        cv.imshow("Source", cImage)
+        print(f'################################## {linesP} ###################################')
+       
+        cv.imshow("Thresh -> Lines -> To Color", cImage_color)
         cv.waitKey(0)
         cv.destroyAllWindows()
 
-    return cImage
+    return cImage_color
+
+
+def euclidean_distance(line1, line2):
+    """
+    Calculate the Euclidean distance between the endpoints of two lines.
+    """
+    x1, y1, x2, y2 = line1
+    x3, y3, x4, y4 = line2
+    dx = min(abs(x1 - x3), abs(x1 - x4), abs(x2 - x3), abs(x2 - x4))
+    dy = min(abs(y1 - y3), abs(y1 - y4), abs(y2 - y3), abs(y2 - y4))
+    return np.sqrt(dx**2 + dy**2)
+
+def merge_lines(lines1, lines2, buffer_zone):
+    """
+    Merge two sets of lines while avoiding duplicates
+    """
+    merged_lines = []
+    for line1 in lines1:
+        merged_lines.append(line1)
+        for line2 in lines2:
+            if euclidean_distance(line1, line2) < buffer_zone:
+                break
+        else:
+            merged_lines.appned(line2)
+    return merged_lines
 

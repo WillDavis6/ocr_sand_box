@@ -1,7 +1,7 @@
 import cv2 as cv
 import sys
 from matplotlib import pyplot as plt
-from opt_preprocessing import get_all_grayscales, detect_lines
+from opt_preprocessing import get_all_grayscales, detect_lines, euclidean_distance, merge_lines
 
 
 blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\table_test.png"
