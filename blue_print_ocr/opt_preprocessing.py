@@ -73,6 +73,7 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
 
     horizontal_lines = []
     vertical_lines = []
+   
 
     if linesP is not None:
 
@@ -87,6 +88,8 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
 
         horizontal_lines = overlapping_filter(horizontal_lines, 1)
         vertical_lines = overlapping_filter(vertical_lines, 0)
+
+        
 
     if (display):
         for i, line in enumerate(horizontal_lines):
@@ -105,7 +108,8 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
         cv.waitKey(0)
         cv.destroyAllWindows()
 
-    return cImage_color
+    return cImage_color, horizontal_lines, vertical_lines
+
 
 
 def euclidean_distance(line1, line2):
