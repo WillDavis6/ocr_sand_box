@@ -12,6 +12,7 @@ def erode(img, kernel_size = 5):
 def get_all_grayscales(blueprint_url):
 
     scr = cv.imread(cv.samples.findFile(blueprint_url), cv.IMREAD_GRAYSCALE)
+
     scr2 = cv.medianBlur(scr,5)
     blur = cv.GaussianBlur(scr,(5,5),0)
 
@@ -63,6 +64,8 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
         print('Error opening image!')
         return -1
     
+    height, width = image.shape[:2]
+    
     dst = cv.Canny(image, 50, 150, False, 3)
 
     cImage = np.copy(image)
@@ -93,12 +96,12 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
 
     if (display):
         for i, line in enumerate(horizontal_lines):
-            cv.line(cImage_color, (0, line[1]), (800, line[3]), (0,255,0), 1, cv.LINE_AA)
+            cv.line(cImage_color, (0, line[1]), (width, line[3]), (0,255,0), 1, cv.LINE_AA)
 
             #cv.putText(cImage, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
         
         for i, line in enumerate(vertical_lines):
-            cv.line(cImage_color, (line[0], 0), (line[2], 1200), (0,0,255), 1, cv.LINE_AA)
+            cv.line(cImage_color, (line[0], 0), (line[2], height), (0,0,255), 1, cv.LINE_AA)
 
             #cv.putText(cImage, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
 
@@ -122,17 +125,39 @@ def euclidean_distance(line1, line2):
     dy = min(abs(y1 - y3), abs(y1 - y4), abs(y2 - y3), abs(y2 - y4))
     return np.sqrt(dx**2 + dy**2)
 
-def merge_lines(lines1, lines2, buffer_zone):
+def merge_lines(list_of_lines, buffer_zone):
     """
     Merge two sets of lines while avoiding duplicates
     """
-    merged_lines = []
-    for line1 in lines1:
-        merged_lines.append(line1)
-        for line2 in lines2:
-            if euclidean_distance(line1, line2) < buffer_zone:
-                break
-        else:
-            merged_lines.appned(line2)
+    merged_lines = list_of_lines[0].copy()
+    for lines in list_of_lines[1:]:
+        new_lines=[]
+        for line1 in lines:
+            for line2 in merged_lines:
+                if euclidean_distance(line1, line2) < buffer_zone:
+                    break
+                else:
+                    new_lines.append(line1)
+            merge_lines.extend(new_lines)
     return merged_lines
 
+
+def show_merged_lines(list_of_lines, image_url):
+  
+    for i, line in enumerate(horizontal_lines):
+        cv.line(cImage_color, (0, line[1]), (width, line[3]), (0,255,0), 1, cv.LINE_AA)
+
+        #cv.putText(cImage, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+    
+    for i, line in enumerate(vertical_lines):
+        cv.line(cImage_color, (line[0], 0), (line[2], height), (0,0,255), 1, cv.LINE_AA)
+
+        #cv.putText(cImage, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+
+    print(f'################################## {linesP} ###################################')
+    
+    cv.imshow("Thresh -> Lines -> To Color", cImage_color)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
+
+    return cImage_color

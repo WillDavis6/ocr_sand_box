@@ -28,6 +28,8 @@ def ocr_magic(bluprint_url, export_url):
         plt.title(titles[i])
         plt.xticks([]),plt.yticks([])
 
+    
+
     plt.show()
 
    
