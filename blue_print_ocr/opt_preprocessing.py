@@ -107,9 +107,9 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
 
         print(f'################################## {linesP} ###################################')
        
-        cv.imshow("Thresh -> Lines -> To Color", cImage_color)
-        cv.waitKey(0)
-        cv.destroyAllWindows()
+        # cv.imshow("Thresh -> Lines -> To Color", cImage_color)
+        # cv.waitKey(0)
+        # cv.destroyAllWindows()
 
     return cImage_color, horizontal_lines, vertical_lines
 
@@ -127,37 +127,57 @@ def euclidean_distance(line1, line2):
 
 def merge_lines(list_of_lines, buffer_zone):
     """
-    Merge two sets of lines while avoiding duplicates
+    Merge lines while avoiding duplicates within each sublist and across sublists.
     """
-    merged_lines = list_of_lines[0].copy()
-    for lines in list_of_lines[1:]:
-        new_lines=[]
-        for line1 in lines:
-            for line2 in merged_lines:
-                if euclidean_distance(line1, line2) < buffer_zone:
-                    break
-                else:
-                    new_lines.append(line1)
-            merge_lines.extend(new_lines)
-    return merged_lines
+    merged_horizontal_lines = []
+    merged_vertical_lines = []
+
+    for sublist in list_of_lines:
+        for lines in sublist:
+            for pack_of_lines in lines:
+                for line in pack_of_lines:
+                    if is_horizontal(line):
+                        merge_line(line, merged_horizontal_lines, buffer_zone)
+                    else:
+                        merge_line(line, merged_vertical_lines, buffer_zone)
+
+    return [merged_horizontal_lines, merged_vertical_lines]
+
+def merge_line(line, merged_lines, buffer_zone):
+    """
+    Merge a line into the list of merged lines while avoiding duplicates.
+    """
+    for merged_line in merged_lines:
+        if euclidean_distance(line, merged_line) < buffer_zone:
+            break
+    else:
+        merged_lines.append(line)
 
 
-def show_merged_lines(list_of_lines, image_url):
+
+
+
+
+def show_merged_lines(all_lines, image_url):
+    
+    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 10)
+
+    cImage_color = cv.imread(image_url)
+
+    height, width = cImage_color.shape[:2]
   
-    for i, line in enumerate(horizontal_lines):
+    for i, line in enumerate(merged_horizontal_lines):
         cv.line(cImage_color, (0, line[1]), (width, line[3]), (0,255,0), 1, cv.LINE_AA)
 
         #cv.putText(cImage, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
     
-    for i, line in enumerate(vertical_lines):
+    for i, line in enumerate(merged_vertical_lines):
         cv.line(cImage_color, (line[0], 0), (line[2], height), (0,0,255), 1, cv.LINE_AA)
 
         #cv.putText(cImage, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
 
-    print(f'################################## {linesP} ###################################')
-    
-    cv.imshow("Thresh -> Lines -> To Color", cImage_color)
+    cv.imshow("Merged Lines", cImage_color)
     cv.waitKey(0)
     cv.destroyAllWindows()
 
-    return cImage_color
+  

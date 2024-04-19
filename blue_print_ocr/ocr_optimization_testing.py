@@ -1,7 +1,7 @@
 import cv2 as cv
 import sys
 from matplotlib import pyplot as plt
-from opt_preprocessing import get_all_grayscales, detect_lines, merge_lines
+from opt_preprocessing import get_all_grayscales, detect_lines, show_merged_lines
 
 
 blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\table_test.png"
@@ -29,10 +29,9 @@ def ocr_magic(bluprint_url, export_url):
         plt.xticks([]),plt.yticks([])
 
     
+    show_merged_lines(all_lines, blueprint_url)
 
-    plt.show()
-
-   
+    return plt.show()
 
 # if scr is None:
 #     sys.exit("Could not read the image.")
