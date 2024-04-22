@@ -105,7 +105,7 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
 
             #cv.putText(cImage, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
 
-        print(f'################################## {linesP} ###################################')
+  
        
         # cv.imshow("Thresh -> Lines -> To Color", cImage_color)
         # cv.waitKey(0)
@@ -160,7 +160,7 @@ def merge_line(line, merged_lines, buffer_zone):
 
 def show_merged_lines(all_lines, image_url):
     
-    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 10)
+    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 30)
 
     cImage_color = cv.imread(image_url)
 
