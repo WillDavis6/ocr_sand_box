@@ -100,15 +100,15 @@ def overlapping_filter(lines, sorting_index):
 
     return filtered_lines
 
-def detect_lines(image, title='default', rho = 1, theta = np.pi/90, threshold = 7, minLinLength = 1500, maxLineGap = 30, display = False, write = False):
+def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLineGap = 30, display = False, write = False):
     # Check if image is loaded fine
-    gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    # gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
-    if gray is None:
+    if image is None:
         print('Error opening image!')
         return -1
     
-    dst = cv.Canny(gray, 50, 150, None, 3)
+    dst = cv.Canny(image, 50, 150, None, 3)
 
     # Copy edges to the image that will display the results in BGR
     cImage = np.copy(image)
@@ -135,12 +135,12 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/90, threshold = 
 
     if (display):
         for i, line in enumerate(horizontal_lines):
-            cv.line(cImage, (line[0], line[1]), (line[2], line[3]), (0,255,0), 3, cv.LINE_AA)
+            cv.line(cImage, (0, line[1]), (800, line[3]), (0,255,0), 3, cv.LINE_AA)
 
             cv.putText(cImage, str(i) + "v", (line[0], line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
 
         for i, line in enumerate(vertical_lines):
-            cv.line(cImage, (line[0], line[1]), (line[2], line[3]), (0,0,255), 3, cv.LINE_AA)
+            cv.line(cImage, (line[0], 0), (line[2], 1200), (0,0,255), 3, cv.LINE_AA)
             cv.putText(cImage, str(i) + "v", (line[0], line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
 
         cv.imshow("Source", cImage)
@@ -148,9 +148,9 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/90, threshold = 
         cv.destroyAllWindows()
 
     if (write):
-        cv.imwrite("../Images/" + title + ".png", cImage)
+        cv.imwrite("../Images/" + title + ".png")
 
-    return (horizontal_lines, vertical_lines)
+    return (horizontal_lines, vertical_lines, cImage)
 
 def get_cropped_image(image, x, y, w, h):
     cropped_image = image[ y:y+h , x:x+w]

@@ -10,8 +10,8 @@ import numpy as np
 def get_grayscale(image):
     return cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
-def get_binary_gaussian(image):
-    (thresh, blackANDWhiteImage) = cv.adaptiveThreshold(image,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,11,2)
+def get_binary(image):
+    (thresh, blackANDWhiteImage) = cv.threshold(image,127,255,cv.THRESH_BINARY)
     return blackANDWhiteImage
 
 def invert_area(image, x, y, w, h, display=False):
@@ -28,10 +28,10 @@ def invert_area(image, x, y, w, h, display=False):
 
 def detect(cropped_frame, is_number = False):
     if(is_number):
-        text = pytesseract.image_to_string(cropped_frame, config = '-c tessedit_char_whitelist=0123456789 --psm 10 --oem 2')
+        text = pytesseract.image_to_string(cropped_frame, config = '-c tessedit_char_whitelist=0123456789 --psm 11 --oem 3')
 
     else:
-        text = pytesseract.image_to_string(cropped_frame, config='--psm 10')
+        text = pytesseract.image_to_string(cropped_frame, config='--psm 11')
 
     return text
 
