@@ -58,6 +58,11 @@ def overlapping_filter(lines, sorting_index):
     
     return filtered_lines
 
+
+
+
+
+
 def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLinGap = 20, display = False, write = False):
 
     if image is None:
@@ -131,31 +136,48 @@ def merge_lines(list_of_lines, buffer_zone):
     """
     merged_horizontal_lines = []
     merged_vertical_lines = []
+    horizontal_lines = []
+    vertical_lines = []
 
-    for sublist in list_of_lines:
-        for lines in sublist:
-            for pack_of_lines in lines:
+    for individual_image_lines in list_of_lines:
+        for hor_versus_vert_lines in individual_image_lines:
+            for pack_of_lines in hor_versus_vert_lines:
                 for line in pack_of_lines:
                     if is_horizontal(line):
-                        merge_line(line, merged_horizontal_lines, buffer_zone)
+                        horizontal_lines.append(line)
+                        line_check(line, merged_horizontal_lines, buffer_zone)
                     elif is_vertical(line):
-                        merge_line(line, merged_vertical_lines, buffer_zone)
+                        vertical_lines.append(line)
+                        line_check(line, merged_vertical_lines, buffer_zone)
                     else:
                         pass
-    print(f'Length of horizontal lines: {len(merged_horizontal_lines)}.')
-    print(f'Length of vertical lines: {len(merged_vertical_lines)}.')
+    print(f'Number of merged horizontal lines: {len(merged_horizontal_lines)}.')
+    print(f'Number of merged vertical lines: {len(merged_vertical_lines)}.')
+    print(f'Number of horizontal lines: {len(horizontal_lines)}.')
+    print(f'Number of vertical lines: {len(vertical_lines)}.')
 
     return [merged_horizontal_lines, merged_vertical_lines]
 
-def merge_line(line, merged_lines, buffer_zone):
+
+
+
+
+def line_check(line, merged_lines, buffer_zone):
     """
     Merge a line into the list of merged lines while avoiding duplicates.
     """
-    for merged_line in merged_lines:
-        if euclidean_distance(line, merged_line) < buffer_zone:
-            break
-    else:
+  
+    
+
+    if len(merged_lines) != 0:
+    
+        if any(euclidean_distance(line, merged_line) < buffer_zone for merged_line in merged_lines):
+            pass
+        else:
+            merged_lines.append(line)
+    elif len(merged_lines) == 0:
         merged_lines.append(line)
+     
 
 
 
@@ -164,10 +186,9 @@ def merge_line(line, merged_lines, buffer_zone):
 
 def show_merged_lines(all_lines, image_url):
     
-    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 20)
+    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 40)
 
-    print(f'Length of merged horizontal lines: {len(merged_horizontal_lines)}.')
-    print(f'Length of merged vertical lines: {len(merged_vertical_lines)}.')
+
 
     cImage_color = cv.imread(image_url)
 
