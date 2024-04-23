@@ -138,8 +138,12 @@ def merge_lines(list_of_lines, buffer_zone):
                 for line in pack_of_lines:
                     if is_horizontal(line):
                         merge_line(line, merged_horizontal_lines, buffer_zone)
-                    else:
+                    elif is_vertical(line):
                         merge_line(line, merged_vertical_lines, buffer_zone)
+                    else:
+                        pass
+    print(f'Length of horizontal lines: {len(merged_horizontal_lines)}.')
+    print(f'Length of vertical lines: {len(merged_vertical_lines)}.')
 
     return [merged_horizontal_lines, merged_vertical_lines]
 
@@ -160,7 +164,10 @@ def merge_line(line, merged_lines, buffer_zone):
 
 def show_merged_lines(all_lines, image_url):
     
-    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 30)
+    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 20)
+
+    print(f'Length of merged horizontal lines: {len(merged_horizontal_lines)}.')
+    print(f'Length of merged vertical lines: {len(merged_vertical_lines)}.')
 
     cImage_color = cv.imread(image_url)
 
