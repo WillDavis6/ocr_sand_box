@@ -31,7 +31,7 @@ def ocr_magic(bluprint_url, export_url):
     
     show_merged_lines(all_lines, blueprint_url)
 
-    return plt.show()
+    # return plt.show()
 
 # if scr is None:
 #     sys.exit("Could not read the image.")
