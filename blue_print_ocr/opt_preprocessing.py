@@ -43,6 +43,8 @@ def is_horizontal(line):
     return line[1]==line[3]
 
 def overlapping_filter(lines, sorting_index):
+# Check lines for one image against other lines of the same axis, uses currently line and previous line in a iterated list, if is closer than 20 pixels filtered out
+
     filtered_lines = []
 
     lines = sorted(lines, key=lambda lines: lines[sorting_index])
@@ -62,7 +64,7 @@ def overlapping_filter(lines, sorting_index):
 
 
 
-
+0
 
 def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLinGap = 20, display = False, write = False):
 
@@ -90,10 +92,22 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
             l = linesP[i][0]
 
             if (is_vertical(l)):
-                vertical_lines.append(l)
+                x1, y1, x2, y2 = l
+
+                y1 = 0
+
+                y2 = height
+
+                vertical_lines.append([x1, y1, x2, y2])
 
             elif (is_horizontal(l)):
-                horizontal_lines.append(l)
+                x1, y1, x2, y2 = l
+
+                x1 = 0
+
+                x2 = width
+
+                horizontal_lines.append([x1, y1, x2, y2])
 
         horizontal_lines = overlapping_filter(horizontal_lines, 1)
         vertical_lines = overlapping_filter(vertical_lines, 0)
@@ -143,6 +157,7 @@ def merge_lines(list_of_lines, buffer_zone):
     num_images = 0
     num_hor_versus_vert = 0
     num_pack_of_lines = 0
+    num_lines = 0
 
 
     for individual_image_lines in list_of_lines:
@@ -152,6 +167,7 @@ def merge_lines(list_of_lines, buffer_zone):
             for pack_of_lines in hor_versus_vert_lines:
                 num_pack_of_lines += 1
                 for line in pack_of_lines:
+                    num_lines += 1
                     if is_horizontal(line):
                         horizontal_lines.append(line)
                         line_check(line, merged_horizontal_lines, buffer_zone)
@@ -161,7 +177,7 @@ def merge_lines(list_of_lines, buffer_zone):
                     else:
                         pass
 
-    print(f'Merge lines report, number of images: {num_images}. Number of packs of horizontal versus vertical {num_hor_versus_vert}. Number of pack of lines: {num_pack_of_lines}')
+    print(f'Merge lines report, number of images: {num_images}. Number of packs of horizontal versus vertical {num_hor_versus_vert}. Number of pack of lines: {num_pack_of_lines}. Number of lines: {num_lines}')
     print(f'Number of merged horizontal lines: {len(merged_horizontal_lines)}.')
     print(f'Number of merged vertical lines: {len(merged_vertical_lines)}.')
     print(f'Number of horizontal lines: {len(horizontal_lines)}.')
@@ -177,8 +193,6 @@ def line_check(line, merged_lines, buffer_zone):
     """
     Merge a line into the list of merged lines while avoiding duplicates.
     """
-  
-    
 
     if len(merged_lines) != 0:
     
@@ -187,6 +201,7 @@ def line_check(line, merged_lines, buffer_zone):
         else:
             merged_lines.append(line)
     elif len(merged_lines) == 0:
+        print(f'This should only print once for line {line}')
         merged_lines.append(line)
      
 
@@ -197,7 +212,7 @@ def line_check(line, merged_lines, buffer_zone):
 
 def show_merged_lines(all_lines, image_url):
     
-    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 20)
+    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 10)
 
 
 
