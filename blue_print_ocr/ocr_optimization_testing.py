@@ -1,7 +1,8 @@
 import cv2 as cv
 import sys
 from matplotlib import pyplot as plt
-from opt_preprocessing import get_all_grayscales, detect_lines, show_merged_lines, crop_ROI, find_text
+from opt_preprocessing import get_all_grayscales, detect_lines, show_merged_lines
+from opt_text_extraction import crop_ROI, find_text
 import pytesseract
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
@@ -42,7 +43,9 @@ def ocr_magic(bluprint_url, export_url):
 
     for i in range(first_line_index, last_line_index):
 
-    crop_ROI(cImage_color, merged_horizontal_lines, merged_vertical_lines,)
+        for h_line, v_line in merged_horizontal_lines, merged_vertical_lines:
+
+            crop_ROI(cImage_color, h_line, v_line,)
 
 
 
