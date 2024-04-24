@@ -48,13 +48,14 @@ def overlapping_filter(lines, sorting_index):
     lines = sorted(lines, key=lambda lines: lines[sorting_index])
 
     for i in range(len(lines)):
-        l_curr = lines[i]
+        line_current = lines[i]
         if(i>0):
-            l_prev = lines[i-1]
-            if( (l_curr[sorting_index] - l_prev[sorting_index]) > 5):
-                filtered_lines.append(l_curr)
+            line_previous = lines[i-1]
+            if( (line_current[sorting_index] - line_previous[sorting_index]) > 20):
+                #filtered_lines.append(line_current)
+                pass
             else:
-                filtered_lines.append(l_curr)
+                filtered_lines.append(line_current)
     
     return filtered_lines
 
