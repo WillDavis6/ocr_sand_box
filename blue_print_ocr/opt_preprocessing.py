@@ -198,22 +198,17 @@ def line_check(line, merged_lines, buffer_zone):
      
 def sort_lines(lines, sorting_index):
 
-    filtered_lines = []
-
-    lines = sorted(lines, key=lambda lines: lines[sorting_index])
-
-    print(type(lines))
-    filtered_lines.append(lines)
+    sorted_lines = sorted(lines, key=lambda lines: lines[sorting_index])
     
-    return filtered_lines
+    return sorted_lines
 
 
 def show_merged_lines(all_lines, image_url):
     
-    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 3)
+    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 20)
 
-    merged_horizontal_lines = sort_lines(merged_horizontal_lines, 0)
-    merged_vertical_lines = sort_lines(merged_vertical_lines, 1)
+    merged_horizontal_lines = sort_lines(merged_horizontal_lines, 1)
+    merged_vertical_lines = sort_lines(merged_vertical_lines, 0)
 
     cImage_color = cv.imread(image_url)
 
@@ -231,8 +226,8 @@ def show_merged_lines(all_lines, image_url):
 
     
 
-    cv.imshow("Merged Lines", cImage_color)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    #cv.imshow("Merged Lines", cImage_color)
+    #cv.waitKey(0)
+    #cv.destroyAllWindows()
 
     return merged_horizontal_lines, merged_vertical_lines, cImage_color

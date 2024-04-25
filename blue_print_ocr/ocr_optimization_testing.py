@@ -52,6 +52,11 @@ def ocr_magic(bluprint_url, export_url):
             bottom_line_index = i+1
 
             cropped_image, (x1, y1, w, h) = crop_ROI(cImage_color, merged_horizontal_lines, merged_vertical_lines, left_line_index, right_line_index, top_line_index, bottom_line_index)
+            
+            text = find_text(cropped_image, is_number=True)
+            print(text)
+            text = find_text(cropped_image, is_number=False)
+            print(text)
 
             #cv.imshow(f'row shot {i}: column {j}', cropped_image)
             #cv.waitKey(0)
