@@ -116,15 +116,9 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
         for i, line in enumerate(horizontal_lines):
             cv.line(cImage_color, (0, line[1]), (width, line[3]), (0,255,0), 1, cv.LINE_AA)
 
-            #cv.putText(cImage, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
-        
         for i, line in enumerate(vertical_lines):
             cv.line(cImage_color, (line[0], 0), (line[2], height), (0,0,255), 1, cv.LINE_AA)
-
-            #cv.putText(cImage, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
-
   
-       
         # cv.imshow("Thresh -> Lines -> To Color", cImage_color)
         # cv.waitKey(0)
         # cv.destroyAllWindows()
@@ -202,17 +196,24 @@ def line_check(line, merged_lines, buffer_zone):
         print(f'This should only print once for line {line}')
         merged_lines.append(line)
      
+def sort_lines(lines, sorting_index):
 
+    filtered_lines = []
 
+    lines = sorted(lines, key=lambda lines: lines[sorting_index])
 
-
+    print(type(lines))
+    filtered_lines.append(lines)
+    
+    return filtered_lines
 
 
 def show_merged_lines(all_lines, image_url):
     
     merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 3)
 
-
+    merged_horizontal_lines = sort_lines(merged_horizontal_lines, 0)
+    merged_vertical_lines = sort_lines(merged_vertical_lines, 1)
 
     cImage_color = cv.imread(image_url)
 
@@ -221,12 +222,14 @@ def show_merged_lines(all_lines, image_url):
     for i, line in enumerate(merged_horizontal_lines):
         cv.line(cImage_color, (0, line[1]), (width, line[3]), (0,255,0), 1, cv.LINE_AA)
 
-        #cv.putText(cImage, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+        cv.putText(cImage_color, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
     
     for i, line in enumerate(merged_vertical_lines):
         cv.line(cImage_color, (line[0], 0), (line[2], height), (0,0,255), 1, cv.LINE_AA)
 
-        #cv.putText(cImage, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+        cv.putText(cImage_color, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+
+    
 
     cv.imshow("Merged Lines", cImage_color)
     cv.waitKey(0)

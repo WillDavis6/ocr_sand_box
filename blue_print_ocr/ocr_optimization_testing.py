@@ -40,12 +40,21 @@ def ocr_magic(bluprint_url, export_url):
 
     first_line_index = 1
     last_line_index = len(merged_vertical_lines)
+    first_row_index = 1
+    last_row_index = len(merged_horizontal_lines)
 
     for i in range(first_line_index, last_line_index):
+        for j in range(first_row_index, last_row_index):
 
-        for h_line, v_line in merged_horizontal_lines, merged_vertical_lines:
+            left_line_index = j
+            right_line_index = j+1
+            top_line_index = i
+            bottom_line_index = i+1
 
-            crop_ROI(cImage_color, h_line, v_line,)
+            cropped_image, (x1, y1, w, h) = crop_ROI(cImage_color, merged_horizontal_lines, merged_vertical_lines, left_line_index, right_line_index, top_line_index, bottom_line_index)
+
+            #cv.imshow(f'row shot {i}: column {j}', cropped_image)
+            #cv.waitKey(0)
 
 
 

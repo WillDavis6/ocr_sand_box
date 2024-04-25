@@ -100,6 +100,13 @@ def overlapping_filter(lines, sorting_index):
 
     return filtered_lines
 
+def sort_columns(lines, sorting_index):
+    filtered_lines = []
+
+    lines = sorted(lines, key=lambda lines: lines[sorting_index])
+
+    return filtered_lines
+
 def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLineGap = 30, display = False, write = False):
     # Check if image is loaded fine
     # gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
