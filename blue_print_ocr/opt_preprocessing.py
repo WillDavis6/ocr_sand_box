@@ -139,7 +139,7 @@ def euclidean_distance(line1, line2):
 
 def merge_lines(list_of_lines, buffer_zone):
     """
-    Merge lines while avoiding duplicates within each sublist and across sublists.
+    Merge lines while avoiding duplicates.
     """
     merged_horizontal_lines = []
     merged_vertical_lines = []
