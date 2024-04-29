@@ -13,7 +13,7 @@ blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\im
 export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
 
 
-def ocr_magic(bluprint_url, export_url):
+def ocr_magic(bluprint_url, export_url, buffer, linValue, overlap_buffer):
 
     
     all_lines = []
@@ -21,7 +21,7 @@ def ocr_magic(bluprint_url, export_url):
 
     for i, image in enumerate(images):
         image_lines = []
-        cimage, horizontal_lines, veritcal_lines = detect_lines(image, minLinLength=500, display=True, write=True)
+        cimage, horizontal_lines, veritcal_lines = detect_lines(image, minLinLength=linValue, display=True, write=True, buffer=overlap_buffer)
         image_lines.append([horizontal_lines, veritcal_lines])
         images[i] = cimage
         # cv.imshow(f'image iteration {i}', cimage)
@@ -36,7 +36,7 @@ def ocr_magic(bluprint_url, export_url):
     #     plt.xticks([]),plt.yticks([])
 
     
-    merged_horizontal_lines, merged_vertical_lines, cImage_color = show_merged_lines(all_lines, blueprint_url)
+    merged_horizontal_lines, merged_vertical_lines, cImage_color = show_merged_lines(all_lines, blueprint_url, buffer)
 
     first_line_index = 0
     last_line_index = len(merged_vertical_lines)-1
@@ -60,8 +60,8 @@ def ocr_magic(bluprint_url, export_url):
             print(text)
             #print(f'Row {i}. Left line index {j}: right line index {j+1}')
 
-            #cv.imshow(f'row shot {i}: column {j}', cropped_image)
-            #cv.waitKey(0)
+            # cv.imshow(f'row shot {i}: column {j}', cropped_image)
+            # cv.waitKey(0)
 
 
 
@@ -78,4 +78,4 @@ def ocr_magic(bluprint_url, export_url):
 
 
 
-ocr_magic(blueprint_url, export_url)
+ocr_magic(blueprint_url, export_url, 20, 500, 4)

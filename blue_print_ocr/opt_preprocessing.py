@@ -40,7 +40,7 @@ def is_vertical(line):
 def is_horizontal(line):
     return line[1]==line[3]
 
-def overlapping_filter(lines, sorting_index):
+def overlapping_filter(lines, sorting_index, buffer):
 # Check lines for one image against other lines of the same axis, uses currently line and previous line in a iterated list, if is closer than 20 pixels filtered out
 
     filtered_lines = []
@@ -51,7 +51,7 @@ def overlapping_filter(lines, sorting_index):
         line_current = lines[i]
         if(i>0):
             line_previous = lines[i-1]
-            if( (line_current[sorting_index] - line_previous[sorting_index]) > 4):
+            if( (line_current[sorting_index] - line_previous[sorting_index]) > buffer):
                 #filtered_lines.append(line_current)
                 pass
             else:
@@ -64,7 +64,7 @@ def overlapping_filter(lines, sorting_index):
 
 0
 
-def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLinGap = 20, display = False, write = False):
+def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 7, minLinLength = 1500, maxLinGap = 20, display = False, write = False, buffer = 4):
 
     if image is None:
         print('Error opening image!')
@@ -107,8 +107,8 @@ def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold =
 
                 horizontal_lines.append([x1, y1, x2, y2])
 
-        horizontal_lines = overlapping_filter(horizontal_lines, 1)
-        vertical_lines = overlapping_filter(vertical_lines, 0)
+        horizontal_lines = overlapping_filter(horizontal_lines, 1, buffer)
+        vertical_lines = overlapping_filter(vertical_lines, 0, buffer)
 
         
 
@@ -203,9 +203,9 @@ def sort_lines(lines, sorting_index):
     return sorted_lines
 
 
-def show_merged_lines(all_lines, image_url):
+def show_merged_lines(all_lines, image_url, buffer):
     
-    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, 20)
+    merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, buffer)
 
     merged_horizontal_lines = sort_lines(merged_horizontal_lines, 1)
     merged_vertical_lines = sort_lines(merged_vertical_lines, 0)
@@ -226,8 +226,8 @@ def show_merged_lines(all_lines, image_url):
 
     
 
-    #cv.imshow("Merged Lines", cImage_color)
-    #cv.waitKey(0)
-    #cv.destroyAllWindows()
+    cv.imshow("Merged Lines", cImage_color)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
     return merged_horizontal_lines, merged_vertical_lines, cImage_color
