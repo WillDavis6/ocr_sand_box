@@ -38,14 +38,15 @@ def ocr_magic(bluprint_url, export_url):
     
     merged_horizontal_lines, merged_vertical_lines, cImage_color = show_merged_lines(all_lines, blueprint_url)
 
-    first_line_index = 1
+    first_line_index = 0
     last_line_index = len(merged_vertical_lines)
-    first_row_index = 1
+    first_row_index = 0
     last_row_index = len(merged_horizontal_lines)
 
-    for i in range(first_line_index, last_line_index):
+    for i in range(first_line_index, last_line_index-1):
+        print(f'j range: {last_line_index}')
         for j in range(first_row_index, last_row_index):
-
+            
             left_line_index = j
             right_line_index = j+1
             top_line_index = i
@@ -57,6 +58,7 @@ def ocr_magic(bluprint_url, export_url):
             print(text)
             text = find_text(cropped_image, is_number=False)
             print(text)
+            print(f'left line index {j}: right line index {j+1}')
 
             #cv.imshow(f'row shot {i}: column {j}', cropped_image)
             #cv.waitKey(0)
