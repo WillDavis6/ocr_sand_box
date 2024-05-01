@@ -203,6 +203,22 @@ def sort_lines(lines, sorting_index):
     return sorted_lines
 
 
+def gather_all_lines(blueprint_url, linValue, overlap_buffer):
+    all_lines = []
+    images, titles = get_all_grayscales(blueprint_url)
+
+    for i, image in enumerate(images):
+        image_lines = []
+        cimage, horizontal_lines, veritcal_lines = detect_lines(image, minLinLength=linValue, display=True, write=True, buffer=overlap_buffer)
+        image_lines.append([horizontal_lines, veritcal_lines])
+        images[i] = cimage
+        # cv.imshow(f'image iteration {i}', cimage)
+        # cv.waitKey(0)
+        all_lines.append(image_lines)
+
+    return all_lines
+
+
 def show_merged_lines(all_lines, image_url, buffer):
     
     merged_horizontal_lines, merged_vertical_lines = merge_lines(all_lines, buffer)

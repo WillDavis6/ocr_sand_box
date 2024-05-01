@@ -1,60 +1,30 @@
 import cv2 as cv
-from python_data_set import app
-from app import db
 from matplotlib import pyplot as plt
-from data_handler_sqlalchemy import DynamicTable
-from opt_preprocessing import get_all_grayscales, detect_lines, show_merged_lines
+from opt_preprocessing import gather_all_lines, show_merged_lines
 from opt_text_extraction import crop_ROI, find_text
+from tables_ocr import build_dynamic_table, DynamicTable
 import pytesseract
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 
-blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\table_test.png"
-#blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\Screenshot 2024-04-24 081630.png"
-
-export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
 
 
-def connect_db(app):
-    """Connect to database."""
-
-    db.app = app
-    db.init_app(app)
-
-                                 
+          
 
 
 def ocr_magic(bluprint_url, export_url, buffer, linValue, overlap_buffer):
 
     
-    all_lines = []
-    images, titles = get_all_grayscales(blueprint_url)
+   all_lines = gather_all_lines(blueprint_url, linValue, overlap_buffer)
 
-    for i, image in enumerate(images):
-        image_lines = []
-        cimage, horizontal_lines, veritcal_lines = detect_lines(image, minLinLength=linValue, display=True, write=True, buffer=overlap_buffer)
-        image_lines.append([horizontal_lines, veritcal_lines])
-        images[i] = cimage
-        # cv.imshow(f'image iteration {i}', cimage)
-        # cv.waitKey(0)
-        all_lines.append(image_lines)
-
-    # SHOWS ALL EXAMPLES OF cv.LINE FOR EACH DIFFEREING THRESHOLD
-
-    # for i in range(10):
-    #     plt.subplot(2,5,i+1),plt.imshow(images[i],'gray',vmin=0,vmax=255)
-    #     plt.title(titles[i])
-    #     plt.xticks([]),plt.yticks([])
-
-    
-    merged_horizontal_lines, merged_vertical_lines, cImage_color = show_merged_lines(all_lines, blueprint_url, buffer)
+    merged_horizontal_lines, merged_vertical_lines, cImage_color = show_merged_lines(lambda: all_lines, blueprint_url, buffer)
 
     first_line_index = 0
     last_line_index = len(merged_vertical_lines)-1
     first_row_index = 0
     last_row_index = len(merged_horizontal_lines)-1
 
-    table = build_dynamic_table(len(merged_horizontal_lines), len(merged_vertical_lines))
+   
 
     for i in range(first_row_index, last_row_index):
         #print(f'On row {i}: j range: {first_line_index} : {last_line_index}')
@@ -89,12 +59,11 @@ def ocr_magic(bluprint_url, export_url, buffer, linValue, overlap_buffer):
 # if k == ord('s'):
 #     cv.imwrite(export_url, scr)
 
-def build_dynamic_table(width, height):
-    if __name__ == "__main__":
-        with app.app_context():
 
-            dynamic_table = DynamicTable.create_table(width, height)
+blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\table_test.png"
+#blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\Screenshot 2024-04-24 081630.png"
 
-    return dynamic_table
+export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
+
 
 ocr_magic(blueprint_url, export_url, 20, 500, 4)
