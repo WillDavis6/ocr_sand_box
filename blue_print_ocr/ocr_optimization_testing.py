@@ -1,6 +1,8 @@
 import cv2 as cv
-import sys
+from python_data_set import app
+from app import db
 from matplotlib import pyplot as plt
+from data_handler_sqlalchemy import DynamicTable
 from opt_preprocessing import get_all_grayscales, detect_lines, show_merged_lines
 from opt_text_extraction import crop_ROI, find_text
 import pytesseract
@@ -11,6 +13,15 @@ blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\im
 #blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\Screenshot 2024-04-24 081630.png"
 
 export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
+
+
+def connect_db(app):
+    """Connect to database."""
+
+    db.app = app
+    db.init_app(app)
+
+                                 
 
 
 def ocr_magic(bluprint_url, export_url, buffer, linValue, overlap_buffer):
@@ -42,6 +53,8 @@ def ocr_magic(bluprint_url, export_url, buffer, linValue, overlap_buffer):
     last_line_index = len(merged_vertical_lines)-1
     first_row_index = 0
     last_row_index = len(merged_horizontal_lines)-1
+
+    table = build_dynamic_table(len(merged_horizontal_lines), len(merged_vertical_lines))
 
     for i in range(first_row_index, last_row_index):
         #print(f'On row {i}: j range: {first_line_index} : {last_line_index}')
@@ -76,6 +89,12 @@ def ocr_magic(bluprint_url, export_url, buffer, linValue, overlap_buffer):
 # if k == ord('s'):
 #     cv.imwrite(export_url, scr)
 
+def build_dynamic_table(width, height):
+    if __name__ == "__main__":
+        with app.app_context():
 
+            dynamic_table = DynamicTable.create_table(width, height)
+
+    return dynamic_table
 
 ocr_magic(blueprint_url, export_url, 20, 500, 4)
