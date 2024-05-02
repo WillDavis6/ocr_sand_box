@@ -247,3 +247,12 @@ def show_merged_lines(all_lines, image_url, buffer):
     cv.destroyAllWindows()
 
     return merged_horizontal_lines, merged_vertical_lines, cImage_color
+
+def return_horizontal_vertical_lines(blueprint_url, buffer, linValue, overlap_buffer):
+
+    
+    all_lines = gather_all_lines(blueprint_url, linValue, overlap_buffer)
+
+    merged_horizontal_lines, merged_vertical_lines, cImage_color = show_merged_lines(all_lines, blueprint_url, buffer)
+
+    return merged_horizontal_lines, merged_vertical_lines, cImage_color

@@ -1,8 +1,7 @@
 import cv2 as cv
 from matplotlib import pyplot as plt
-from opt_preprocessing import gather_all_lines, show_merged_lines
+from opt_preprocessing import return_horizontal_vertical_lines
 from opt_text_extraction import crop_ROI, find_text
-from tables_ocr import build_dynamic_table, DynamicTable
 import pytesseract
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
@@ -12,12 +11,11 @@ pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesse
           
 
 
-def ocr_magic(bluprint_url, export_url, buffer, linValue, overlap_buffer):
 
-    
-   all_lines = gather_all_lines(blueprint_url, linValue, overlap_buffer)
 
-    merged_horizontal_lines, merged_vertical_lines, cImage_color = show_merged_lines(lambda: all_lines, blueprint_url, buffer)
+def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer):
+
+    merged_horizontal_lines, merged_vertical_lines, cImage_color = return_horizontal_vertical_lines(blueprint_url, buffer, linValue, overlap_buffer)
 
     first_line_index = 0
     last_line_index = len(merged_vertical_lines)-1
@@ -60,10 +58,8 @@ def ocr_magic(bluprint_url, export_url, buffer, linValue, overlap_buffer):
 #     cv.imwrite(export_url, scr)
 
 
-blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\table_test.png"
-#blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\Screenshot 2024-04-24 081630.png"
-
-export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
 
 
-ocr_magic(blueprint_url, export_url, 20, 500, 4)
+
+
+# Buffer distance, min line length, and secondary buffer distance
