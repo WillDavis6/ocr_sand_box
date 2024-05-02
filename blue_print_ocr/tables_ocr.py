@@ -13,6 +13,7 @@ Base = declarative_base()
 
 class DynamicTable(Base):
     __tablename__ = 'dynamic_table'
+    __table_args__ = {'extend_existing' :True}
     id = Column(Integer, primary_key=True)
 
 
@@ -38,17 +39,18 @@ class DynamicTable(Base):
 
         return table
 
-Session = sessionmaker(bind=engine)
 
-def add_row(column_list):
+
+def add_row(row_values, table):
     session = Session()
 
     try:
-        new_row = DynamicTable()
+        new_row = table()
 
-        for i, value in enumerate(column_list, start=1):
+        for i, value in enumerate(row_values):
             setattr(new_row, f"column_{i}", value)
 
+        session = Session()
         session.add(new_row)
 
         session.commit()
@@ -62,7 +64,7 @@ def add_row(column_list):
         session.close()
 
 
-
+Session = sessionmaker(bind=engine)
 
 blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\table_test.png"
 #blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\Screenshot 2024-04-24 081630.png"
@@ -73,6 +75,6 @@ export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshot
 
 
 if __name__ == "__main__":
-    DynamicTable.create_table(39, 14)
-    ocr_magic(blueprint_url, export_url, 20, 500, 4)
+    table = DynamicTable.create_table(39, 14)
+    ocr_magic(blueprint_url, export_url, 20, 500, 4, table)
    
