@@ -233,12 +233,12 @@ def show_merged_lines(all_lines, image_url, buffer):
     for i, line in enumerate(merged_horizontal_lines):
         cv.line(cImage_color, (0, line[1]), (width, line[3]), (0,255,0), 1, cv.LINE_AA)
 
-        cv.putText(cImage_color, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+        #cv.putText(cImage_color, str(i) + 'line', (0, line[1] + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
     
     for i, line in enumerate(merged_vertical_lines):
         cv.line(cImage_color, (line[0], 0), (line[2], height), (0,0,255), 1, cv.LINE_AA)
 
-        cv.putText(cImage_color, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
+        #cv.putText(cImage_color, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
 
     
 

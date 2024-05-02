@@ -43,7 +43,7 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, table
             text = find_text(cropped_image, is_number=False)
             print(text)
 
-            row_values.append(text_num)
+            row_values.append(text + text_num)
 
         print(f'Rows to add {row_values}')
         add_row(row_values, table)
