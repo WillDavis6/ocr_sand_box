@@ -241,10 +241,10 @@ def show_merged_lines(all_lines, image_url, buffer):
         #cv.putText(cImage_color, str(i) + 'line', (line[0], 0 + 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv.LINE_AA)
 
     
-
-    cv.imshow("Merged Lines", cImage_color)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    #SHOW IMAGE WITH LINES OVER LAYED - TURNED OFF IF COMMENTED OUT
+    # cv.imshow("Merged Lines", cImage_color)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
 
     return merged_horizontal_lines, merged_vertical_lines, cImage_color
 

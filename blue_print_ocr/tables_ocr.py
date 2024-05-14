@@ -70,6 +70,8 @@ Session = sessionmaker(bind=engine)
 blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\TEST_IMAGE_Page_3.jpg"
 #blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 COMBINED_Page_01.jpg"
 
+template_url = "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\FN template_Page_02.jpg"
+
 export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
 
 
@@ -77,5 +79,5 @@ export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshot
 
 if __name__ == "__main__":
     table = DynamicTable.create_table(25, 12)
-    ocr_magic(blueprint_url, export_url, 20, 500, 4, table)
+    ocr_magic(blueprint_url, export_url, 20, 500, 4, table, template_url)
    

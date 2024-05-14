@@ -15,8 +15,14 @@ pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesse
 
 
 
-def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, table):
+def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, table, template_url):
 
+    # Prepare template by reading and converting to gray scale
+    template = cv.imread(template_url)
+    template_gray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
+
+
+    # Prepare all lines to overlay image
     merged_horizontal_lines, merged_vertical_lines, cImage_color = return_horizontal_vertical_lines(blueprint_url, buffer, linValue, overlap_buffer)
 
     first_line_index = 0
@@ -24,6 +30,7 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, table
     first_row_index = 0
     last_row_index = len(merged_horizontal_lines)-1
 
+    # Build sql table row by row
     from tables_ocr import add_row
 
     for i in range(first_row_index, last_row_index):
@@ -46,12 +53,24 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, table
 
 
             # Template match for field note images. 
-            if not text_num:
+            if text_num:
+                row_values.append(text_num)
+            else:
+                # Convert ROI into correct data type and depth
+                print(f'################## DATA TYPE OF ROI: {type(cImage_color)}')
+                roi_converted = cv.imread(cropped_image)
+                roi_gray = cv.cvtColor(roi_converted, cv.COLOR_BGR2GRAY)
+
                 threshold = 0.8
-                roi_result = cv.matchTemplate(cropped_image, fn_template, cv.TM_CCOEFF_NORMED)
+                roi_result = cv.matchTemplate(roi_gray, template_gray, cv.TM_CCOEFF_NORMED)
                 max_val = np.max(roi_result)
 
-            row_values.append(text_num)
+                if max_val >= threshold:
+                    row_values.append('Template matched, insert: 1')
+                else:
+                    row_values.append(None)
+
+           
 
         print(f'Rows to add {row_values}')
         add_row(row_values, table)
