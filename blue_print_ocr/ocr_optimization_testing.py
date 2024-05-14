@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 from opt_preprocessing import return_horizontal_vertical_lines
 from opt_text_extraction import crop_ROI, find_text
 import pytesseract
+import numpy as np
 
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
@@ -40,10 +41,17 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, table
            
             text_num = find_text(cropped_image, is_number=True)
             print(text_num)
-            text = find_text(cropped_image, is_number=False)
-            print(text)
+            # text = find_text(cropped_image, is_number=False)
+            # print(text)
 
-            row_values.append(text + text_num)
+
+            # Template match for field note images. 
+            if not text_num:
+                threshold = 0.8
+                roi_result = cv.matchTemplate(cropped_image, fn_template, cv.TM_CCOEFF_NORMED)
+                max_val = np.max(roi_result)
+
+            row_values.append(text_num)
 
         print(f'Rows to add {row_values}')
         add_row(row_values, table)
