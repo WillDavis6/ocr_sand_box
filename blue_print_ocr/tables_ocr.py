@@ -67,8 +67,8 @@ def add_row(row_values, table):
 Session = sessionmaker(bind=engine)
 
 #blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\table_test.png"
-blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\TEST_IMAGE_Page_3.jpg"
-#blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 COMBINED_Page_01.jpg"
+#blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\TEST_IMAGE_Page_3.jpg"
+blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 COMBINED_Page_01.jpg"
 
 template_url = "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\FN template_Page_02.jpg"
 
@@ -78,6 +78,6 @@ export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshot
 
 
 if __name__ == "__main__":
-    table = DynamicTable.create_table(25, 12)
+    table = DynamicTable.create_table(83, 17)
     ocr_magic(blueprint_url, export_url, 20, 500, 4, table, template_url)
    
