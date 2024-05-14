@@ -17,9 +17,11 @@ pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesse
 
 def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, table, template_url):
 
-    # Prepare template by reading and converting to gray scale
+    # Prepare template and blueprint by reading and converting to gray scale // for template match
     template = cv.imread(template_url)
     template_gray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
+    blueprint = cv.imread(blueprint_url)
+    
 
 
     # Prepare all lines to overlay image
@@ -43,9 +45,12 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, table
             top_line_index = i
             bottom_line_index = i+1
             
-
+            #Simultaniously crop the image for lines and crop another gray scale for comparision to template // issue with data type previously.
+            #Convert the cropped ROI for match temple after cropping.
             cropped_image, (x1, y1, w, h) = crop_ROI(cImage_color, merged_horizontal_lines, merged_vertical_lines, left_line_index, right_line_index, top_line_index, bottom_line_index)
-           
+            cropped_image_4_gray, (x1, y1, w, h) = crop_ROI(blueprint, merged_horizontal_lines, merged_vertical_lines, left_line_index, right_line_index, top_line_index, bottom_line_index)
+            crop_gray = cv.cvtColor(cropped_image_4_gray, cv.COLOR_BGR2GRAY)
+            
             text_num = find_text(cropped_image, is_number=True)
             print(text_num)
             # text = find_text(cropped_image, is_number=False)
@@ -57,12 +62,15 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, table
                 row_values.append(text_num)
             else:
                 # Convert ROI into correct data type and depth
-                print(f'################## DATA TYPE OF ROI: {type(cImage_color)}')
-                roi_converted = cv.imread(cropped_image)
-                roi_gray = cv.cvtColor(roi_converted, cv.COLOR_BGR2GRAY)
 
                 threshold = 0.8
-                roi_result = cv.matchTemplate(roi_gray, template_gray, cv.TM_CCOEFF_NORMED)
+                
+                #Prepare ROI by resizing to match template
+                template_height, template_width = template_gray.shape[:2]
+                resized_cropped_image = cv.resize(crop_gray, (template_width, template_height))
+
+                #Match ROI to template. For example Field notes for material callouts
+                roi_result = cv.matchTemplate(resized_cropped_image, template_gray, cv.TM_CCOEFF_NORMED)
                 max_val = np.max(roi_result)
 
                 if max_val >= threshold:
