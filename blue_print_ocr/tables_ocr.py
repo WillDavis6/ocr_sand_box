@@ -70,7 +70,7 @@ Session = sessionmaker(bind=engine)
 #blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\TEST_IMAGE_Page_3.jpg"
 blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 COMBINED_Page_01.jpg"
 
-template_url = "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\FN template_Page_02.jpg"
+template_url = "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\FN_Page_01.jpg"
 
 export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
 
