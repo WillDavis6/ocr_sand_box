@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-import psycopg2
 from ocr_optimization_testing import ocr_magic
+
 
 # Create an engine and connect to a PostgreSQL database
 
@@ -54,7 +54,7 @@ def add_row(row_values, table):
         session.add(new_row)
 
         session.commit()
-        print(f'Row {i} added successfully!')
+        #print(f'Row {i} added successfully!')
     except Exception as e:
         session.rollback()
         print(f'Error adding row: {e}')
@@ -70,7 +70,7 @@ Session = sessionmaker(bind=engine)
 #blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\TEST_IMAGE_Page_3.jpg"
 blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 COMBINED_Page_01.jpg"
 
-template_url = "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\FN_Page_01.jpg"
+#template_url = "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\FN_Page_01.jpg"
 
 export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
 
@@ -78,6 +78,6 @@ export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshot
 
 
 if __name__ == "__main__":
-    table = DynamicTable.create_table(83, 17)
-    ocr_magic(blueprint_url, export_url, 20, 500, 4, table, template_url)
+    # table = DynamicTable.create_table(83, 17)
+    ocr_magic(blueprint_url, export_url, 20, 500, 4)
    
