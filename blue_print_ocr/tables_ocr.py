@@ -19,8 +19,8 @@ class DynamicTable(Base):
 
 
     @classmethod
-    def create_table(cls, num_rows, num_columns):
-        table_name = f"dynamic_table_{num_rows}x{num_columns}"
+    def create_table(cls, num_columns, i):
+        table_name = f"dynamic_table_{i}"
         columns = {'id': Column(Integer, primary_key=True)}
         
 
@@ -80,6 +80,8 @@ blueprint_list = ["C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\b
 
 if __name__ == "__main__":
     # table = DynamicTable.create_table(83, 17)
-    for blueprint_url in blueprint_list:
-        ocr_magic(blueprint_url, export_url, 20, 500, 4)
+    
+    for i, blueprint_url in enumerate(blueprint_list):
+        ocr_magic(blueprint_url, export_url, 20, 500, 4, i)
+        
    

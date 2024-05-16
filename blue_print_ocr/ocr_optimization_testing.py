@@ -9,7 +9,7 @@ import numpy as np
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 
-def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer):
+def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, i):
 
     #Import table format inside function to prevent circular imports
     from tables_ocr import DynamicTable
@@ -26,7 +26,7 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer):
     merged_horizontal_lines, merged_vertical_lines, cImage_color = return_horizontal_vertical_lines(blueprint_url, buffer, linValue, overlap_buffer)
 
     #Dynamically build sql table by number of lines detected
-    table = DynamicTable.create_table(len(merged_horizontal_lines), len(merged_vertical_lines))
+    table = DynamicTable.create_table(len(merged_vertical_lines), i)
 
     first_line_index = 0
     last_line_index = len(merged_vertical_lines)-1
