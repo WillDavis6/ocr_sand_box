@@ -169,11 +169,11 @@ def merge_lines(list_of_lines, buffer_zone):
                     else:
                         pass
 
-    print(f'Merge lines report, number of images: {num_images}. Number of packs of horizontal versus vertical {num_hor_versus_vert}. Number of pack of lines: {num_pack_of_lines}. Number of lines: {num_lines}')
-    print(f'Number of merged horizontal lines: {len(merged_horizontal_lines)}.')
-    print(f'Number of merged vertical lines: {len(merged_vertical_lines)}.')
-    print(f'Number of horizontal lines: {len(horizontal_lines)}.')
-    print(f'Number of vertical lines: {len(vertical_lines)}.')
+    # print(f'Merge lines report, number of images: {num_images}. Number of packs of horizontal versus vertical {num_hor_versus_vert}. Number of pack of lines: {num_pack_of_lines}. Number of lines: {num_lines}')
+    # print(f'Number of merged horizontal lines: {len(merged_horizontal_lines)}.')
+    # print(f'Number of merged vertical lines: {len(merged_vertical_lines)}.')
+    # print(f'Number of horizontal lines: {len(horizontal_lines)}.')
+    # print(f'Number of vertical lines: {len(vertical_lines)}.')
 
     return [merged_horizontal_lines, merged_vertical_lines]
 
@@ -193,7 +193,7 @@ def line_check(line, merged_lines, buffer_zone):
         else:
             merged_lines.append(line)
     elif len(merged_lines) == 0:
-        print(f'This should only print once for line {line}')
+        # print(f'This should only print once for line {line}')
         merged_lines.append(line)
      
 def sort_lines(lines, sorting_index):

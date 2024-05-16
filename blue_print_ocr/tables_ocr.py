@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from ocr_optimization_testing import ocr_magic
+from colorama import Fore
 
 
 # Create an engine and connect to a PostgreSQL database
@@ -35,7 +36,7 @@ class DynamicTable(Base):
 
         table.metadata.create_all(engine)
        
-        print(f'$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  CREATED TABLE: {table_name}  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        print(Fore.GREEN + f'INITIATE --> CREATED TABLE: {table_name}')
 
         return table
 
@@ -68,16 +69,17 @@ Session = sessionmaker(bind=engine)
 
 #blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\table_test.png"
 #blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\TEST_IMAGE_Page_3.jpg"
-blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 COMBINED_Page_01.jpg"
+#blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 COMBINED_Page_01.jpg"
 
 #template_url = "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\FN_Page_01.jpg"
 
 export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
 
-
+blueprint_list = ["C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_01.jpg", "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_02.jpg", "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_24.jpg", "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_25.jpg", "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_26.jpg"]
 
 
 if __name__ == "__main__":
     # table = DynamicTable.create_table(83, 17)
-    ocr_magic(blueprint_url, export_url, 20, 500, 4)
+    for blueprint_url in blueprint_list:
+        ocr_magic(blueprint_url, export_url, 20, 500, 4)
    

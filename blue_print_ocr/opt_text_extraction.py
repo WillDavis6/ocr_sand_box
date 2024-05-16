@@ -20,9 +20,9 @@ def crop_ROI(image, horizontal, vertical, left_line_index, right_line_index, top
 
 def find_text(cropped_frame, is_number = False):
     if(is_number):
-        text = pytesseract.image_to_string(cropped_frame, config= '-c tessedit_char_whitelist=0123456789 --psm 9 --oem 3')
+        text = pytesseract.image_to_string(cropped_frame, config= '-c tessedit_char_whitelist=0123456789 --psm 11 --oem 3')
 
     else: 
-        text = pytesseract.image_to_string(cropped_frame, config= '--psm 7 --oem 3')
+        text = pytesseract.image_to_string(cropped_frame, config= '--psm 11 --oem 3')
 
     return text
