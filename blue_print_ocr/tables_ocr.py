@@ -66,6 +66,7 @@ def add_row(row_values, table):
 
 
 Session = sessionmaker(bind=engine)
+session = Session()
 
 #blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\table_test.png"
 #blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\TEST_IMAGE_Page_3.jpg"
@@ -83,5 +84,8 @@ if __name__ == "__main__":
     
     for i, blueprint_url in enumerate(blueprint_list):
         ocr_magic(blueprint_url, export_url, 20, 500, 4, i)
+        query = session.query(dynamic_table_0).order_by(desc(dynamic_table_0.c.id)).limit(1)
+        last_row = query.one()
+        target_column = None
         
    
