@@ -10,6 +10,7 @@ from colorama import Fore
 engine = create_engine('postgresql+psycopg2://postgres:Msi_123@localhost:5432/portal_data_base')
 
 Base = declarative_base()
+metadata = MetaData()
 
 
 class DynamicTable(Base):
@@ -31,12 +32,13 @@ class DynamicTable(Base):
 
         table = type(table_name, (Base,), {
             '__tablename__': table_name,
-            '__table_args__': {'extend_existing': True, 'metadata': metadata},
+            '__table_args__': {'extend_existing': True},
             **columns
         })
 
-        metadata.tables[table_name] = table.__table__
+        table.__table__.metadata = metadata
         metadata.create_all(engine)
+        metadata.reflect(engine)
        
         print(Fore.GREEN + f'INITIATE --> CREATED TABLE: {table_name}')
 
@@ -45,7 +47,7 @@ class DynamicTable(Base):
 
 
 def add_row(row_values, table):
-    session = Session()
+    
 
     try:
         new_row = table()
@@ -53,7 +55,6 @@ def add_row(row_values, table):
         for i, value in enumerate(row_values):
             setattr(new_row, f"column_{i}", value)
 
-        session = Session()
         session.add(new_row)
 
         session.commit()
@@ -64,7 +65,7 @@ def add_row(row_values, table):
 
     finally:
 
-        session.close()
+        pass
 
 
 Session = sessionmaker(bind=engine)
@@ -84,15 +85,21 @@ if __name__ == "__main__":
     for i, blueprint_url in enumerate(blueprint_list):
         table_name = ocr_magic(blueprint_url, export_url, 20, 500, 4, i, metadata, engine)
 
-        table = metadata.tables[table_name]
-        query = session.query(table).order_by(desc(table.c.id)).limit(1)
-        last_row = query.one()
-        target_column = None
+        print(f'Table name returned: {table_name}')
+        print(f'Metadata tables: {metadata.tables.keys()}')
 
-        for column in table.c:
-            if 'MAT' in str(getattr(last_row, column.name)):
-                target_column = column.name
-                print ('FOUND MATERIAL COLUMN')
+        if table_name in metadata.tables:
+            table = metadata.tables[table_name]
+            query = session.query(table).order_by(desc(table.c.id)).limit(1)
+            last_row = query.one()
+            target_column = None
+
+            for column in table.c:
+                if 'MAT' in str(getattr(last_row, column.name)):
+                    target_column = column.name
+                    print ('FOUND MATERIAL COLUMN')
+        else:
+            print(f'Error: Table{table_name} not found in metadata.tables')
 
 session.close()        
    

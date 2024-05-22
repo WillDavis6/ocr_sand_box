@@ -54,7 +54,7 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index
                 row_values.append(text)
            
             
-
+            print(f'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {metadata.tables('dynamic_table_0')}')
             #print(f'Rows to add {row_values}')
             add_row(row_values, table)
             progress.update(task, advance=1)
