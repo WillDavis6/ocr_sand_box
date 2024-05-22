@@ -6,30 +6,27 @@ import pytesseract
 import numpy as np
 
 
+
+
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 
-def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, i):
+def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index, metadata, engine):
 
     #Import table format inside function to prevent circular imports
-    from tables_ocr import DynamicTable
+    from rich.progress import Progress
 
     # Prepare all lines to overlay image
     merged_horizontal_lines, merged_vertical_lines, cImage_color = return_horizontal_vertical_lines(blueprint_url, buffer, linValue, overlap_buffer)
-
+    from tables_ocr import DynamicTable, add_row
     #Dynamically build sql table by number of lines detected
-    table = DynamicTable.create_table(len(merged_vertical_lines), i)
+    table = DynamicTable.create_table(len(merged_vertical_lines), index, metadata, engine)
 
     first_line_index = 0
     last_line_index = len(merged_vertical_lines)-1
     first_row_index = 0
     last_row_index = len(merged_horizontal_lines)-1
-
-    # Build sql table row by row
-    from tables_ocr import add_row
-
-    # Import library for status bar
-    from rich.progress import Progress
+    
 
     rows_range = range(first_row_index, last_row_index)
 
@@ -61,6 +58,10 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, i):
             #print(f'Rows to add {row_values}')
             add_row(row_values, table)
             progress.update(task, advance=1)
+
+    
+    return f"dynamic_table_{index}"
+    
 
 
          

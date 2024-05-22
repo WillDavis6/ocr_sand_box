@@ -1,7 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, Table, select, desc, MetaData
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from ocr_optimization_testing import ocr_magic
+
 from colorama import Fore
 
 
@@ -19,7 +19,7 @@ class DynamicTable(Base):
 
 
     @classmethod
-    def create_table(cls, num_columns, i):
+    def create_table(cls, num_columns, i, metadata, engine):
         table_name = f"dynamic_table_{i}"
         columns = {'id': Column(Integer, primary_key=True)}
         
@@ -31,10 +31,12 @@ class DynamicTable(Base):
 
         table = type(table_name, (Base,), {
             '__tablename__': table_name,
+            '__table_args__': {'extend_existing': True, 'metadata': metadata},
             **columns
         })
 
-        table.metadata.create_all(engine)
+        metadata.tables[table_name] = table.__table__
+        metadata.create_all(engine)
        
         print(Fore.GREEN + f'INITIATE --> CREATED TABLE: {table_name}')
 
@@ -67,12 +69,9 @@ def add_row(row_values, table):
 
 Session = sessionmaker(bind=engine)
 session = Session()
+metadata = MetaData()
 
-#blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\images\\table_test.png"
-#blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\TEST_IMAGE_Page_3.jpg"
-#blueprint_url =  "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 COMBINED_Page_01.jpg"
 
-#template_url = "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\FN_Page_01.jpg"
 
 export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
 
@@ -80,12 +79,20 @@ blueprint_list = ["C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\b
 
 
 if __name__ == "__main__":
-    # table = DynamicTable.create_table(83, 17)
+    from ocr_optimization_testing import ocr_magic
     
     for i, blueprint_url in enumerate(blueprint_list):
-        ocr_magic(blueprint_url, export_url, 20, 500, 4, i)
-        query = session.query(dynamic_table_0).order_by(desc(dynamic_table_0.c.id)).limit(1)
+        table_name = ocr_magic(blueprint_url, export_url, 20, 500, 4, i, metadata, engine)
+
+        table = metadata.tables[table_name]
+        query = session.query(table).order_by(desc(table.c.id)).limit(1)
         last_row = query.one()
         target_column = None
-        
+
+        for column in table.c:
+            if 'MAT' in str(getattr(last_row, column.name)):
+                target_column = column.name
+                print ('FOUND MATERIAL COLUMN')
+
+session.close()        
    
