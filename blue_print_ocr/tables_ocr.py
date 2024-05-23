@@ -106,6 +106,9 @@ if __name__ == "__main__":
                 if 'MAT' in string:
                     target_column = column.name
                     print (Fore.BLUE + f'FOUND MATERIAL COLUMN: {string}. COLUMN NAME: {target_column}')
+                if 'PART' in string:
+                    target_column = column.name
+                    print (Fore.BLUE + f'FOUND PART NUMBER COLUMN: {string}. PART NUMBER: {target_column}')
                 
         else:
             print(Fore.RED + f'Error: Table{table_name} not found in metadata.tables')
