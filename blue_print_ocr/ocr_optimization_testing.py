@@ -4,23 +4,25 @@ from opt_preprocessing import return_horizontal_vertical_lines
 from opt_text_extraction import crop_ROI, find_text
 import pytesseract
 import numpy as np
-
+from rich.progress import Progress
 
 
 
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 
-def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index, metadata, engine):
+def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index, metadata, engine, Session):
 
     #Import table format inside function to prevent circular imports
-    from rich.progress import Progress
+    from tables_ocr import DynamicTable, add_row
+    session = Session()
 
     # Prepare all lines to overlay image
     merged_horizontal_lines, merged_vertical_lines, cImage_color = return_horizontal_vertical_lines(blueprint_url, buffer, linValue, overlap_buffer)
-    from tables_ocr import DynamicTable, add_row
+    
     #Dynamically build sql table by number of lines detected
     table = DynamicTable.create_table(len(merged_vertical_lines), index, metadata, engine)
+
 
     first_line_index = 0
     last_line_index = len(merged_vertical_lines)-1
@@ -54,9 +56,8 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index
                 row_values.append(text)
            
             
-            print(f'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {metadata.tables('dynamic_table_0')}')
             #print(f'Rows to add {row_values}')
-            add_row(row_values, table)
+            add_row(row_values, table, session)
             progress.update(task, advance=1)
 
     

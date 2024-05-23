@@ -1,6 +1,10 @@
+import sys
+sys.path.append("C:\\Users\\William.davis\\Desktop\\python_data_set")
+
 from sqlalchemy import create_engine, Column, Integer, String, Table, select, desc, MetaData
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from data_handler_sqlalchemy import CompTable
 
 from colorama import Fore
 
@@ -12,6 +16,8 @@ engine = create_engine('postgresql+psycopg2://postgres:Msi_123@localhost:5432/po
 Base = declarative_base()
 metadata = MetaData()
 
+Base.metadata.drop_all(engine)
+Base.metadata.create_all(engine)
 
 class DynamicTable(Base):
     __tablename__ = 'dynamic_table'
@@ -30,27 +36,30 @@ class DynamicTable(Base):
             column_name = f"column_{j+1}"
             columns[column_name] = Column(String(255))
 
-        table = type(table_name, (Base,), {
+        table_class = type(table_name, (Base,), {
             '__tablename__': table_name,
             '__table_args__': {'extend_existing': True},
             **columns
         })
 
-        table.__table__.metadata = metadata
-        metadata.create_all(engine)
+        table_class.__table__.metadata = metadata
+        Base.metadata.create_all(engine)
         metadata.reflect(engine)
        
         print(Fore.GREEN + f'INITIATE --> CREATED TABLE: {table_name}')
 
-        return table
-
-
-
-def add_row(row_values, table):
+        return table_class
     
+
+
+
+
+def add_row(row_values, table, session):
 
     try:
         new_row = table()
+
+     
 
         for i, value in enumerate(row_values):
             setattr(new_row, f"column_{i}", value)
@@ -63,9 +72,8 @@ def add_row(row_values, table):
         session.rollback()
         print(f'Error adding row: {e}')
 
-    finally:
-
-        pass
+   
+   
 
 
 Session = sessionmaker(bind=engine)
@@ -83,10 +91,9 @@ if __name__ == "__main__":
     from ocr_optimization_testing import ocr_magic
     
     for i, blueprint_url in enumerate(blueprint_list):
-        table_name = ocr_magic(blueprint_url, export_url, 20, 500, 4, i, metadata, engine)
+        table_name = ocr_magic(blueprint_url, export_url, 20, 500, 4, i, metadata, engine, Session)
 
-        print(f'Table name returned: {table_name}')
-        print(f'Metadata tables: {metadata.tables.keys()}')
+        
 
         if table_name in metadata.tables:
             table = metadata.tables[table_name]
@@ -95,11 +102,13 @@ if __name__ == "__main__":
             target_column = None
 
             for column in table.c:
-                if 'MAT' in str(getattr(last_row, column.name)):
+                string = str(getattr(last_row, column.name))
+                if 'MAT' in string:
                     target_column = column.name
-                    print ('FOUND MATERIAL COLUMN')
+                    print (Fore.BLUE + f'FOUND MATERIAL COLUMN: {string}. COLUMN NAME: {target_column}')
+                
         else:
-            print(f'Error: Table{table_name} not found in metadata.tables')
+            print(Fore.RED + f'Error: Table{table_name} not found in metadata.tables')
 
 session.close()        
    
