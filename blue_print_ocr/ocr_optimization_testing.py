@@ -31,7 +31,8 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index
     
 
     rows_range = range(first_row_index, last_row_index)
-
+   
+  
     progress = Progress()
 
     task = progress.add_task("[green]Processing Table", total=len(rows_range))
@@ -44,23 +45,23 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index
                 
                 left_line_index = j
                 right_line_index = j+1
-                top_line_index = i
-                bottom_line_index = i+1
+                top_line_index = i-1
+                bottom_line_index = i
                 
                 #Simultaniously crop the image for lines and crop another gray scale for comparision to template // issue with data type previously.
                 #Convert the cropped ROI for match temple after cropping.
                 cropped_image, (x1, y1, w, h) = crop_ROI(cImage_color, merged_horizontal_lines, merged_vertical_lines, left_line_index, right_line_index, top_line_index, bottom_line_index)
 
                 
-                if i != rows_range[-1]:
+                if i == rows_range[-1]:
                 
-                    text = find_text(cropped_image, is_number=True)
+                    text = find_text(cropped_image, is_number=False)
         
                     row_values.append(text)
 
                 else:
 
-                    text = find_text(cropped_image, is_number=False)
+                    text = find_text(cropped_image, is_number=True)
         
                     row_values.append(text)
             

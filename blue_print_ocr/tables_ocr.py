@@ -103,12 +103,28 @@ if __name__ == "__main__":
 
             for column in table.c:
                 string = str(getattr(last_row, column.name))
-                if 'MAT' in string:
-                    target_column = column.name
-                    print (Fore.BLUE + f'FOUND MATERIAL COLUMN: {string}. COLUMN NAME: {target_column}')
+
                 if 'PART' in string:
                     target_column = column.name
                     print (Fore.BLUE + f'FOUND PART NUMBER COLUMN: {string}. PART NUMBER: {target_column}')
+
+                    part_num_column_data = session.query(getattr(table.c, target_column)).all()
+
+                    for data in part_num_column_data:
+                        new_row = CompTable(part_id=data[0])
+
+
+                if 'MAT' in string:
+                    target_column = column.name
+                    print (Fore.BLUE + f'FOUND MATERIAL COLUMN: {string}. COLUMN NAME: {target_column}')
+
+                    mat_column_data = session.query(getattr(table.c, target_column)).all()
+
+                    for data in part_num_column_data:
+                        new_row = CompTable(material=data[0])
+                    
+
+              
                 
         else:
             print(Fore.RED + f'Error: Table{table_name} not found in metadata.tables')
