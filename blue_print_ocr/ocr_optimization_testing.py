@@ -45,11 +45,11 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index
                 
                 left_line_index = j
                 right_line_index = j+1
-                top_line_index = i-1
-                bottom_line_index = i
+                top_line_index = i
+                bottom_line_index = i +1
                 
                 #Simultaniously crop the image for lines and crop another gray scale for comparision to template // issue with data type previously.
-                #Convert the cropped ROI for match temple after cropping.
+   
                 cropped_image, (x1, y1, w, h) = crop_ROI(cImage_color, merged_horizontal_lines, merged_vertical_lines, left_line_index, right_line_index, top_line_index, bottom_line_index)
 
                 
