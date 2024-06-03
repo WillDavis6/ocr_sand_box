@@ -75,6 +75,41 @@ def add_row(row_values, table, session):
         session.rollback()
         print(f'Error adding row: {e}')
 
+
+        
+def find_columns(last_row, table):
+    for column in table:
+
+                
+
+        #Convert cell value into workable string
+        string = str(getattr(last_row, column.name))
+
+        #If Part column is found
+        if 'PART' in string:
+            print(Fore.BLUE + f'FOUND PART NUMBER COLUMN: {string}. PART NUMBER: {column.name}')
+
+            part_num_data = session.query(getattr(table, target_column)).all()
+
+        else:
+            part_num_data = None
+
+        if 'MAT' in string:
+            target_column = column.name
+            print(Fore.BLUE + f'FOUND MATERIAL COLUMN: {string}. COLUMN NAME: {target_column}')
+
+            material_data = session.query(getattr(table, target_column)).all()
+
+        else: material_data = None
+
+    return part_num_data, material_data
+
+
+
+
+
+
+
 # Example usage of DynamicTable
 if __name__ == "__main__":
     from ocr_optimization_testing import ocr_magic
@@ -89,69 +124,123 @@ if __name__ == "__main__":
 
     export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
 
+
+
+    # Iterate over list of blueprint screen shots
     for i, blueprint_url in enumerate(blueprint_list):
+
+        #Run ocr_magic funciton including all background functions to preprocess and pull data from screenshots, return sql table name created
         table_name = ocr_magic(blueprint_url, export_url, 20, 500, 4, i, metadata, engine, Session)
 
+
+        #If said created table is in metadata contiune
         if table_name in metadata.tables:
+
+            #pull table data from metadata
             table = metadata.tables[table_name]
+
+            #query in session the data from table in descending order
             query = session.query(table).order_by(desc(table.c.id)).limit(1)
+            
+            #query the first row which is really the last row (We are searching for the column names)
             last_row = query.one()
-            target_column = None
+          
+            #Iterate over the columns (We will be searching for the Material and Part Number columns)
+            part_num_data, material_data = find_columns(last_row, table.c)
 
-            for column in table.c:
-                string = str(getattr(last_row, column.name))
+            #Iterate over both lists in tandem
+            if part_num_data and material_data:
+                for part_num, material in zip(part_num_data, material_data):
 
-                if 'PART' in string:
-                    target_column = column.name
-                    print(Fore.BLUE + f'FOUND PART NUMBER COLUMN: {string}. PART NUMBER: {target_column}')
+                    #Extract applicable data from values
+                    part_id = f'35-8227-{part_num[0]}'
+                    mat = material[0]
 
-                    part_num_column_data = session.query(getattr(table.c, target_column)).all()
+                    #Fill new row with captured data (Primary key will be a sequncial integer)
+                    new_row = CompTable(part_id=part_id, material=mat)
 
-                    for data in part_num_column_data:
-                        part_id = f'35-8227-{data[0]}'
+                    session.add(new_row)
 
-                     
-                        if not session.query(CompTable).filter_by(part_id=part_id).first():
-                            
-                            print(Fore.CYAN + f'Adding Data {part_id}')
-                            
-                            new_row = CompTable(part_id=part_id)
-                            session.add(new_row)
-                        else:
-                            print(Fore.YELLOW + f'Duplicate entry found: {part_id}, skipping insertion.')
-
-                session.commit()
-                print(Fore.GREEN + f'Part Number Information Committed')
-
-                if 'MAT' in string:
-                    target_column = column.name
-                    print(Fore.BLUE + f'FOUND MATERIAL COLUMN: {string}. COLUMN NAME: {target_column}')
-
-                    mat_column_data = session.query(getattr(table.c, target_column)).all()
-
-                    print(Fore.CYAN + 'Session data added?')
-
-                    for data in mat_column_data:
-                        
-                        print(Fore.CYAN + f'Adding Data {data[0]}')
-                        
-                        new_row = session.query(CompTable).filter_by(part_id=f'35-8227-{data[0]}').first()
-                        if new_row:
-                            new_row.material = data[0]
-                        else:
-                            new_row = CompTable(material=data[0])
-                            session.add(new_row)
-
-            try:
-                session.commit()
-                print(Fore.GREEN + 'Session Changes Committed')
-            except IntegrityError as e:
+        try:
+            session.commit()
+            print(Fore.GREEN + 'Session Changes Committed')
+        except IntegrityError as e:
                 session.rollback()
                 print(Fore.RED + f'Error committing changes: {e}')
         else:
             print(Fore.RED + f'Error: Table {table_name} not found in metadata.tables')
 
     session.close()
+
+            
+          
+
+
+
+
+
+
+
+
+
+    #         for column in table.c:
+    #             string = str(getattr(last_row, column.name))
+
+    #             if 'PART' in string:
+    #                 target_column = column.name
+    #                 print(Fore.BLUE + f'FOUND PART NUMBER COLUMN: {string}. PART NUMBER: {target_column}')
+
+    #                 part_num_column_data = session.query(getattr(table.c, target_column)).all()
+
+    #                 for data in part_num_column_data:
+    #                     part_id = f'35-8227-{data[0]}'
+
+                     
+    #                     if not session.query(CompTable).filter_by(part_id=part_id).first():
+                            
+    #                         print(Fore.CYAN + f'Adding Data {part_id}')
+                            
+    #                         new_row = CompTable(part_id=part_id)
+    #                         session.add(new_row)
+    #                     else:
+    #                         print(Fore.YELLOW + f'Duplicate entry found: {part_id}, skipping insertion.')
+
+    #             session.commit()
+    #             print(Fore.GREEN + f'Part Number Information Committed')
+
+    #             if 'MAT' in string:
+    #                 target_column = column.name
+    #                 print(Fore.BLUE + f'FOUND MATERIAL COLUMN: {string}. COLUMN NAME: {target_column}')
+
+    #                 mat_column_data = session.query(getattr(table.c, target_column)).all()
+
+    #                 print(Fore.CYAN + 'Session data added?')
+
+    #                 for data in mat_column_data:
+                        
+    #                     print(Fore.CYAN + f'Adding Data {data[0]}')
+                        
+    #                     new_row = session.query(CompTable).filter_by(part_id=f'35-8227-{data[0]}').first()
+    #                     if new_row:
+    #                         new_row.material = data[0]
+    #                     else:
+    #                         new_row = CompTable(material=data[0])
+    #                         session.add(new_row)
+
+    #         try:
+    #             session.commit()
+    #             print(Fore.GREEN + 'Session Changes Committed')
+    #         except IntegrityError as e:
+    #             session.rollback()
+    #             print(Fore.RED + f'Error committing changes: {e}')
+    #     else:
+    #         print(Fore.RED + f'Error: Table {table_name} not found in metadata.tables')
+
+    # session.close()
+
+
+
+
 
 
 #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
