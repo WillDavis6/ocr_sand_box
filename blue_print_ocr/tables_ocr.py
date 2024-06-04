@@ -57,8 +57,8 @@ class DynamicTable(Base):
         })
 
         table_class.__table__.metadata = metadata
-        Base.metadata.create_all(engine)
-        metadata.reflect(engine)
+        table_class.__table__.create(bind=engine)
+        metadata.reflect(bind=engine)
 
         print(Fore.GREEN + f'INITIATE --> CREATED TABLE: {table_name}')
         return table_class
@@ -87,6 +87,8 @@ def find_columns(last_row, table):
 
         #If Part column is found
         if 'PART' in string:
+            target_column = column.name
+
             print(Fore.BLUE + f'FOUND PART NUMBER COLUMN: {string}. PART NUMBER: {column.name}')
 
             part_num_data = session.query(getattr(table, target_column)).all()
@@ -132,7 +134,6 @@ if __name__ == "__main__":
         #Run ocr_magic funciton including all background functions to preprocess and pull data from screenshots, return sql table name created
         table_name = ocr_magic(blueprint_url, export_url, 20, 500, 4, i, metadata, engine, Session)
 
-
         #If said created table is in metadata contiune
         if table_name in metadata.tables:
 
@@ -167,6 +168,7 @@ if __name__ == "__main__":
         except IntegrityError as e:
                 session.rollback()
                 print(Fore.RED + f'Error committing changes: {e}')
+
         else:
             print(Fore.RED + f'Error: Table {table_name} not found in metadata.tables')
 
