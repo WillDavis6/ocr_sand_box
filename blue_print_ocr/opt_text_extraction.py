@@ -26,3 +26,4 @@ def find_text(cropped_frame, is_number = False):
         text = pytesseract.image_to_string(cropped_frame, config= '--psm 7 --oem 3')
 
     return text
+
