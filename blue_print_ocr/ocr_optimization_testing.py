@@ -70,6 +70,17 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index
 
     
     return f"dynamic_table_{index}"
+
+
+def drop_tables(tables_list, metadata, engine, Fore):
+    for table_name in tables_list:
+        if table_name in metadata.tables:
+            table = metadata.tables[table_name]
+            table.drop(engine)
+            print(Fore.GREEN + f'Dropped table: {table_name}')
+        else:
+            print(Fore.RED + f'Table {table_name} does not exist')
+
     
 
 

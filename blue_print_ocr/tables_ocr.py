@@ -14,14 +14,25 @@ init(autoreset=True)
 # Database URI
 DATABASE_URI = 'postgresql+psycopg2://postgres:Msi_123@localhost:5432/portal_data_base'
 
+blueprint_list = [
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_01.jpg",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_02.jpg",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_24.jpg",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_25.jpg",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_26.jpg"
+]
+
+export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
+
+tables_list = ['comp_table', 'dynamic_table_0', 'dynamic_table_1', 'dynamic_table_2', 'dynamic_table_3', 'dynamic_table_4']
+
+
 # Create an engine and metadata instance
 engine = create_engine(DATABASE_URI)
 metadata = MetaData()
 Base = declarative_base()
 
-# Drop and recreate all tables defined by Base
-Base.metadata.drop_all(engine)
-Base.metadata.create_all(engine)
+
 
 # Define CompTable model
 class CompTable(Base):
@@ -82,9 +93,10 @@ def add_row(row_values, table, session):
 
         
 def find_columns(last_row, table):
-    for column in table:
+    part_num_data = None
+    material_data = None
 
-                
+    for column in table:
 
         #Convert cell value into workable string
         string = str(getattr(last_row, column.name))
@@ -96,17 +108,19 @@ def find_columns(last_row, table):
             print(Fore.BLUE + f'FOUND PART NUMBER COLUMN: {string}. PART NUMBER: {column.name}')
 
             part_num_data = session.query(getattr(table, target_column)).all()
+            print(f'PART NUMBER DATA {part_num_data}')
 
-        else:
-            part_num_data = None
+        # else:
+        #     part_num_data = None
 
         if 'MAT' in string:
             target_column = column.name
             print(Fore.BLUE + f'FOUND MATERIAL COLUMN: {string}. COLUMN NAME: {target_column}')
 
             material_data = session.query(getattr(table, target_column)).all()
+            print(f'MATERIAL DATA: {material_data}')
 
-        else: material_data = None
+        # else: material_data = None
 
     return part_num_data, material_data
 
@@ -118,18 +132,14 @@ def find_columns(last_row, table):
 
 # Example usage of DynamicTable
 if __name__ == "__main__":
-    from ocr_optimization_testing import ocr_magic
+    from ocr_optimization_testing import ocr_magic, drop_tables
 
-    blueprint_list = [
-        "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_01.jpg",
-        "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_02.jpg",
-        "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_24.jpg",
-        "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_25.jpg",
-        "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_26.jpg"
-    ]
+    # Drop and recreate all tables defined by Base
+    drop_tables(tables_list, metadata, engine, Fore)
 
-    export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
-
+    # Auto create the compiled table during each run
+    CompTable.__table__.create(bind=engine)
+    print(Fore.GREEN + 'comptable created')
 
 
     # Iterate over list of blueprint screen shots
@@ -162,13 +172,18 @@ if __name__ == "__main__":
                 if part_num_data and material_data:
                     for part_num, material in zip(part_num_data, material_data):
 
-                        #Extract applicable data from values
-                        part_id = f'35-8227-{part_num[0]}'
                         mat = material[0]
+                        part_id = None
+
+                        #Extract applicable data from values
+                        if len(part_num[0]) < 4: 
+                            part_id = f'35-8227-{part_num[0]}'
+                            
+                        else:
+                            part_id = part_num[0]
 
                         #Fill new row with captured data (Primary key will be a sequncial integer)
                         new_row = CompTable(part_id=part_id, material=mat)
-
                         session.add(new_row)
 
                 else:
