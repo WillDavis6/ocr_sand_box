@@ -19,6 +19,10 @@ engine = create_engine(DATABASE_URI)
 metadata = MetaData()
 Base = declarative_base()
 
+# Drop and recreate all tables defined by Base
+Base.metadata.drop_all(engine)
+Base.metadata.create_all(engine)
+
 # Define CompTable model
 class CompTable(Base):
     __tablename__ = 'comp_table'
@@ -31,9 +35,7 @@ class CompTable(Base):
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Drop and recreate all tables defined by Base
-Base.metadata.drop_all(engine)
-Base.metadata.create_all(engine)
+
 
 # Define DynamicTable class with a class method to create tables dynamically
 class DynamicTable(Base):
@@ -56,7 +58,9 @@ class DynamicTable(Base):
             **columns
         })
 
-        table_class.__table__.metadata = metadata
+        setattr(sys.modules[__name__], table_name, table_class)
+
+        #table_class.__table__.metadata = metadata
         table_class.__table__.create(bind=engine)
         metadata.reflect(bind=engine)
 
@@ -131,46 +135,57 @@ if __name__ == "__main__":
     # Iterate over list of blueprint screen shots
     for i, blueprint_url in enumerate(blueprint_list):
 
+
         #Run ocr_magic funciton including all background functions to preprocess and pull data from screenshots, return sql table name created
         table_name = ocr_magic(blueprint_url, export_url, 20, 500, 4, i, metadata, engine, Session)
 
         #If said created table is in metadata contiune
-        if table_name in metadata.tables:
-
-            #pull table data from metadata
-            table = metadata.tables[table_name]
-
-            #query in session the data from table in descending order
-            query = session.query(table).order_by(desc(table.c.id)).limit(1)
-            
-            #query the first row which is really the last row (We are searching for the column names)
-            last_row = query.one()
-          
-            #Iterate over the columns (We will be searching for the Material and Part Number columns)
-            part_num_data, material_data = find_columns(last_row, table.c)
-
-            #Iterate over both lists in tandem
-            if part_num_data and material_data:
-                for part_num, material in zip(part_num_data, material_data):
-
-                    #Extract applicable data from values
-                    part_id = f'35-8227-{part_num[0]}'
-                    mat = material[0]
-
-                    #Fill new row with captured data (Primary key will be a sequncial integer)
-                    new_row = CompTable(part_id=part_id, material=mat)
-
-                    session.add(new_row)
-
         try:
-            session.commit()
-            print(Fore.GREEN + 'Session Changes Committed')
+
+            if table_name in metadata.tables:
+
+                #pull table data from metadata
+                table = metadata.tables[table_name]
+
+                #query in session the data from table in descending order
+                query = session.query(table).order_by(desc(table.c.id)).limit(1)
+                
+                #query the first row which is really the last row (We are searching for the column names)
+                last_row = query.one()
+            
+                #Iterate over the columns (We will be searching for the Material and Part Number columns)
+                part_num_data, material_data = find_columns(last_row, table.c)
+
+                print(f'This is part_num_data{part_num_data}. This is material_data{material_data}')
+
+                #Iterate over both lists in tandem
+                if part_num_data and material_data:
+                    for part_num, material in zip(part_num_data, material_data):
+
+                        #Extract applicable data from values
+                        part_id = f'35-8227-{part_num[0]}'
+                        mat = material[0]
+
+                        #Fill new row with captured data (Primary key will be a sequncial integer)
+                        new_row = CompTable(part_id=part_id, material=mat)
+
+                        session.add(new_row)
+
+                else:
+                    print(Fore.RED + f'Something Wrong With part_num_data or material_data')
+
+           
+                session.commit()
+                print(Fore.GREEN + 'Session Changes Committed')
+
+            else:
+                print(Fore.RED + f'Error: Table {table_name} not found in metadata.tables')
+
         except IntegrityError as e:
                 session.rollback()
                 print(Fore.RED + f'Error committing changes: {e}')
 
-        else:
-            print(Fore.RED + f'Error: Table {table_name} not found in metadata.tables')
+            
 
     session.close()
 
