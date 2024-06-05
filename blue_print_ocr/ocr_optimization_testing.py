@@ -23,7 +23,6 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index
     #Dynamically build sql table by number of lines detected
     table = DynamicTable.create_table(len(merged_vertical_lines), index, metadata, engine)
 
-
     first_line_index = 0
     last_line_index = len(merged_vertical_lines)-1
     first_row_index = 0
