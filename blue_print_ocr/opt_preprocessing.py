@@ -242,9 +242,9 @@ def show_merged_lines(all_lines, image_url, buffer):
 
     
     #SHOW IMAGE WITH LINES OVER LAYED - TURNED OFF IF COMMENTED OUT
-    # cv.imshow("Merged Lines", cImage_color)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
+    #cv.imshow("Merged Lines", cImage_color)
+    #cv.waitKey(0)
+    #cv.destroyAllWindows()
 
     return merged_horizontal_lines, merged_vertical_lines, cImage_color
 

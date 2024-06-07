@@ -15,16 +15,20 @@ init(autoreset=True)
 DATABASE_URI = 'postgresql+psycopg2://postgres:Msi_123@localhost:5432/portal_data_base'
 
 blueprint_list = [
-    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_01.jpg",
-    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_02.jpg",
-    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_24.jpg",
-    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_25.jpg",
-    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227 ALL COMBINED_Page_26.jpg"
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227_01.png",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227_02.png",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227_03.png",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227_04.png",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227_5.png",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227_6.png",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227_7.png",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227_8.png",
+    "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227_9.png"
 ]
 
 export_url = "C:\\Users\\William.davis\\OneDrive - msiGCCH\\Pictures\\Screenshots\\test_updated_image_cv2.png"
 
-tables_list = ['comp_table', 'dynamic_table_0', 'dynamic_table_1', 'dynamic_table_2', 'dynamic_table_3', 'dynamic_table_4']
+tables_list = ['comp_table', 'dynamic_table_0', 'dynamic_table_1', 'dynamic_table_2', 'dynamic_table_3', 'dynamic_table_4', 'dynamic_table_5', 'dynamic_table_6', 'dynamic_table_7', 'dynamic_table_8']
 
 
 # Create an engine and metadata instance
@@ -105,7 +109,7 @@ def find_columns(last_row, table):
         if 'PART' in string:
             target_column = column.name
 
-            print(Fore.BLUE + f'FOUND PART NUMBER COLUMN: {string}. PART NUMBER: {column.name}')
+            #print(Fore.BLUE + f'FOUND PART NUMBER COLUMN: {string}. PART NUMBER: {column.name}')
 
             part_num_data = session.query(getattr(table, target_column)).all()
 
@@ -114,7 +118,7 @@ def find_columns(last_row, table):
 
         if 'MAT' in string:
             target_column = column.name
-            print(Fore.BLUE + f'FOUND MATERIAL COLUMN: {string}. COLUMN NAME: {target_column}')
+            #print(Fore.BLUE + f'FOUND MATERIAL COLUMN: {string}. COLUMN NAME: {target_column}')
 
             material_data = session.query(getattr(table, target_column)).all()
 

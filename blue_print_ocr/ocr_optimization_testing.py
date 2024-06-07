@@ -61,8 +61,24 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index
                 else:
 
                     text = find_text(cropped_image, is_number=False)
-        
-                    row_values.append(text)
+                    if 'i' in text or 'lt >' in text or '[>' in text or  'L' in text or '1' in text:
+                        
+                        row_values.append('1')
+                    # elif 's' in text:
+
+                    #     row_values.append('9')
+                    elif '2' in text or '[a>' in text:
+
+                        row_values.append('2')
+                    elif '3' in text or 'es' in text:
+
+                        row_values.append('3')
+                    elif 'ee' in text or 'BS' in text or 'Bn' in text or 'Be' in text or 're' in text:
+
+                        row_values.append('')
+                    else:
+
+                        row_values.append(text)
             
             #print(f'Rows to add {row_values}')
             add_row(row_values, table, session)
@@ -81,6 +97,9 @@ def drop_tables(tables_list, metadata, engine, Fore, inspect, text):
                 print(Fore.CYAN + f'Dropped table: {table_name}')
             else:
                 print(Fore.RED + f'Table {table_name} does not exist')
+
+
+
 
     
 
