@@ -12,7 +12,7 @@ sys.path.append("C:\\Users\\William.davis\\Desktop\\python_data_set")
 init(autoreset=True)
 
 # Database URI
-DATABASE_URI = 'postgresql+psycopg2://postgres:Msi_123@localhost:5432/portal_data_base'
+DATABASE_URI = 'postgresql+psycopg2://postgres:Msi_123@localhost:5432/portal_data_base?client_encoding=utf8'
 
 blueprint_list = [
     "C:\\Users\\William.davis\\Desktop\\python_data_set\\static\\blueprints\\35-8227_01.png",
@@ -176,7 +176,10 @@ if __name__ == "__main__":
                         part_id = None
 
                         #Extract applicable data from values
-                        if len(part_num[0]) <= 4: 
+                        if not part_num[0]:
+
+                            part_id = None
+                        elif len(part_num[0]) <= 4: 
                             part_id = f'35-8227-{part_num[0]}'
                             
                         else:
@@ -193,6 +196,22 @@ if __name__ == "__main__":
                 session.commit()
                 print(Fore.GREEN + 'Session Changes Committed')
 
+                TABLE_NAME = tables_list[0]
+                OUTPUT_FILE = "C:\\Users\\William.davis\\Desktop\\python_data_set\\blue_print_ocr\\g_vision_test.py"            
+
+                table = Table(TABLE_NAME, metadata, autoload=True, autoload_with=engine)
+
+                with engine.connect() as connection:
+                    result = connection.execute(table.select())
+
+                    with open(OUTPUT_FILE, "w", encoding='utf-8') as file:
+
+                        file.write('\t'.join(table.columns.keys()) + '\n')
+
+                        for row in result:
+                            row_values = [str(value) for value in row]
+                            file.write("\t".join(row_values) + '\n')
+
             else:
                 print(Fore.RED + f'Error: Table {table_name} not found in metadata.tables')
 
@@ -200,9 +219,12 @@ if __name__ == "__main__":
                 session.rollback()
                 print(Fore.RED + f'Error committing changes: {e}')
 
-            
-
+   
     session.close()
+
+
+
+
 
             
           

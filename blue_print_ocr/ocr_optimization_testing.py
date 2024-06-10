@@ -54,31 +54,31 @@ def ocr_magic(blueprint_url, export_url, buffer, linValue, overlap_buffer, index
                 
                 if i == rows_range[-1]:
                 
-                    text = find_text(cropped_image, is_number=False)
+                    text = find_text(cropped_image)
         
                     row_values.append(text)
 
                 else:
 
-                    text = find_text(cropped_image, is_number=False)
-                    if 'i' in text or 'lt >' in text or '[>' in text or  'L' in text or '1' in text:
+                    text = find_text(cropped_image)
+                    # if 'i' in text or 'lt >' in text or '[>' in text or  'L' in text or '1' in text:
                         
-                        row_values.append('1')
-                    # elif 's' in text:
+                    #     row_values.append('1')
+                    # # elif 's' in text:
 
-                    #     row_values.append('9')
-                    elif '2' in text or '[a>' in text:
+                    # #     row_values.append('9')
+                    # elif '2' in text or '[a>' in text:
 
-                        row_values.append('2')
-                    elif '3' in text or 'es' in text:
+                    #     row_values.append('2')
+                    # elif '3' in text or 'es' in text:
 
-                        row_values.append('3')
-                    elif 'ee' in text or 'BS' in text or 'Bn' in text or 'Be' in text or 're' in text:
+                    #     row_values.append('3')
+                    # elif 'ee' in text or 'BS' in text or 'Bn' in text or 'Be' in text or 're' in text:
 
-                        row_values.append('')
-                    else:
+                    #     row_values.append('')
+                    # else:
 
-                        row_values.append(text)
+                    row_values.append(text)
             
             #print(f'Rows to add {row_values}')
             add_row(row_values, table, session)
