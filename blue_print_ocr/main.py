@@ -61,6 +61,8 @@ def main(display = False, print_text = False, write = False):
             top_line_index = i
             bottom_line_index = i+1
 
+            #insert
+
             cropped_image, (x,y,w,h) = get_ROI(bw, horizontal, vertical, left_line_index, right_line_index, top_line_index, bottom_line_index)
 
             if (keyword[j]=='kabupaten'):
